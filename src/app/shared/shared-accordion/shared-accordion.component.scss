@@ -1,0 +1,68 @@
+.example-action-buttons {
+    padding-bottom: 20px;
+  }
+  
+  .example-headers-align .mat-expansion-panel-header-description {
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .example-headers-align .mat-mdc-form-field + .mat-mdc-form-field {
+    margin-left: 8px;
+  }
+  .custom-panel-header{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .custom-panel-header  .title-panel{
+    display: flex;
+    flex-direction: column;
+  }
+  .custom-panel-header .custom-heading{
+    font-size: 16px;
+  }
+  .custom-panel-header .custom-sub-heading{
+    color:#2626268A
+  }
+  //
+  .mat-accordion-list{
+    position: relative;
+  }
+  .mat-list-details{
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .mat-list-details .custom-sub-heading{
+    color:#2626268A
+  }
+  .more-vernt{
+    position: absolute;
+    top: 0px;
+    right: 10px;
+  }
+  //check box
+  .panel-content {
+    position: relative;
+  }
+  
+  .custom-checkbox .mat-checkbox-inner-container {
+    border-radius: 50%; /* Make the checkbox round */
+    width: 18px; /* Set the width and height to make it visually round */
+    height: 18px;
+    overflow: hidden; /* Hide the excess part of the round checkbox */
+  }
+  
+  .mat-checkbox-frame {
+    display: none; /* Hide the default checkbox frame */
+  }
+  
+  .mat-checkbox-background {
+    background-color: #ccc; /* Set background color */
+  }
+  
+  .mat-checkbox-ripple {
+    display: none; /* Hide ripple effect */
+  }
+  
