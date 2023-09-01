@@ -68,45 +68,26 @@ export class SharedAccordionComponent {
     }
   }
 
-  // onItemDropped(event: CdkDragDrop<string[]>, i: number) {
-  //   if (event.previousContainer === event.container) {
-  //     // Move within the same list
-  //     console.log(event.previousIndex, event.currentIndex)
-  //     let data: CheckItem[] = this.selectData[i]?.checks || [];
-  //     moveItemInArray(data, event.previousIndex, event.currentIndex);
-  //   } else {
-  //     console.log('fff')
-  //     // Move between lists
-  //     // transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
-  //   }
-  // }
+
 
   onItemDropped(event: any, listIndex: number) {
     if (event.previousContainer !== event.container) {
-      console.log('different')
-      // Item was dropped into a different list
       const item = event.item.data;
-      const sourceIndex = event.previousIndex;
-      const targetIndex = event.currentIndex;
+      let data = event.container.id
+      data = data.charAt(data.length - 1)
+      data = parseInt(data)
 
-      // Remove the item from the source list
-      const sourceList = this.selectData.find((_, index) => index === listIndex);
-      if (sourceList && sourceList.checks) {
-        sourceList.checks.splice(sourceIndex, 1);
-      }
+      let selectIndex = item[1]
+      let checkIndex = item[2]
+      this.selectData[data].checks?.push(item[0])
+      this.selectData[selectIndex].checks?.splice(checkIndex, 1)
 
-      // Insert the item into the target list
-      const targetListIndex = this.connectedLists.indexOf(event.container.id);
-      if (targetListIndex >= 0) {
-        const targetList = this.selectData[targetListIndex];
-        if (targetList && targetList.checks) {
-          targetList.checks.splice(targetIndex, 0, item);
-        }
-      }
+      console.log(item, data)
+
     } else {
       let data: CheckItem[] = this.selectData[listIndex]?.checks || [];
       moveItemInArray(data, event.previousIndex, event.currentIndex);
     }
   }
-
+  // [cdkDragData] = "[check ,i,checkNumber]"
 }
