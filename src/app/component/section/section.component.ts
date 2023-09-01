@@ -7,5 +7,76 @@ import { selectData } from '../../shared/interface/select-item';
   styleUrls: ['./section.component.scss']
 })
 export class SectionComponent {
-  selectData = selectData
+  selectData = [
+    {
+      name: 'Test 1',
+      orderNumber: 4,
+      id: 'a11',
+      checks: [{
+        check: 'check 01',
+        orderNumber: 1,
+        id: 'aa111'
+      }, {
+        check: 'check 14',
+        orderNumber: 1,
+        id: 'aa111'
+      }, {
+        check: 'check 41',
+        orderNumber: 1,
+        id: 'aa111'
+      }, {
+        check: 'check 144',
+        orderNumber: 1,
+        id: 'aa111'
+      }]
+    }, {
+      name: 'Test 1',
+      orderNumber: 4,
+      id: 'a11',
+      checks: [{
+        check: 'check 1',
+        orderNumber: 1,
+        id: 'aa111'
+      }, {
+        check: 'check 1',
+        orderNumber: 1,
+        id: 'aa111'
+      }, {
+        check: 'check 1',
+        orderNumber: 1,
+        id: 'aa111'
+      }, {
+        check: 'check 1',
+        orderNumber: 1,
+        id: 'aa111'
+      }]
+    },
+    {
+      name: 'Test 1',
+      orderNumber: 4,
+      id: 'a11',
+      checks: [{
+        check: 'check 1',
+        orderNumber: 1,
+        id: 'aa111'
+      }, {
+        check: 'check 1',
+        orderNumber: 1,
+        id: 'aa111'
+      }, {
+        check: 'check 1',
+        orderNumber: 1,
+        id: 'aa111'
+      }, {
+        check: 'check 1',
+        orderNumber: 1,
+        id: 'aa111'
+      }]
+    }, {
+      name: 'Test 1',
+      orderNumber: 4,
+      id: 'a11',
+    }
+  ]
+
 }

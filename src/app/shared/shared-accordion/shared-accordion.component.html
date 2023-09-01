@@ -1,6 +1,5 @@
 <mat-accordion class="section-panel" multi>
-    <mat-expansion-panel #chapterExpansionPanel (cdkDropListDropped)="onItemDropped($event)" *ngFor="let selection of selectData ,
-    let i=index" (mouseenter)="mouseEnter(selection ,i)" (mouseleave)="selection.isHovered = false" #expansionPanel [ngClass]="selection.isCheckAll ==true? 'allActive' :''" [disabled]="!selection.checks?.length">
+    <mat-expansion-panel *ngFor="let selection of selectData ,let i=index" cdkDropList [cdkDropListData]="selection" (cdkDropListDropped)="onItemDropped($event, i)" (mouseenter)="mouseEnter(selection ,i)" (mouseleave)="selection.isHovered = false" #expansionPanel [ngClass]="selection.isCheckAll ==true? 'allActive' :''" [disabled]="!selection.checks?.length">
         <mat-expansion-panel-header>
 
             <mat-panel-title class="custom-panel-header">
@@ -26,8 +25,8 @@
                 </button>
             </mat-menu>
         </mat-expansion-panel-header>
-        <mat-list cdkDropList [cdkDropListDisabled]="false" (cdkDropListDropped)="onItemDropped($event)" *ngFor="let check of selection.checks || [], let checkNumber=index" (mouseenter)="check.isHovered = true" (mouseleave)="check.isHovered = false" [ngClass]="check.isCheck ==true? 'allActive' :''">
-            <mat-list-item class="mat-accordion-list" cdkDrag>
+        <mat-list *ngFor="let check of selection.checks || [], let checkNumber=index" (mouseenter)="check.isHovered = true" (mouseleave)="check.isHovered = false" [ngClass]="check.isCheck ==true? 'allActive' :''">
+            <mat-list-item class="mat-accordion-list" cdkDrag [cdkDragData]="check">
                 <div class="mat-list-details">
                     <mat-checkbox [checked]="check.isCheck" [style.opacity]="check.isHovered ? 1 : 0" class="custom-checkbox" (change)="onCheckboxListChange(selection ,i,checkNumber)"> </mat-checkbox>
                     <span>{{checkNumber}}</span>
@@ -51,6 +50,5 @@
             </mat-list-item>
         </mat-list>
     </mat-expansion-panel>
-
 </mat-accordion>
 <app-shared-checkbox></app-shared-checkbox>

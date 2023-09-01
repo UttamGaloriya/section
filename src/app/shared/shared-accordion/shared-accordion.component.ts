@@ -15,78 +15,7 @@ export class SharedAccordionComponent {
   edit() {
     console.log("edit");
   }
-  selectData: SelectItem[] = [
-    {
-      name: 'Test 1',
-      orderNumber: 4,
-      id: 'a11',
-      checks: [{
-        check: 'check 01',
-        orderNumber: 1,
-        id: 'aa111'
-      }, {
-        check: 'check 14',
-        orderNumber: 1,
-        id: 'aa111'
-      }, {
-        check: 'check 41',
-        orderNumber: 1,
-        id: 'aa111'
-      }, {
-        check: 'check 144',
-        orderNumber: 1,
-        id: 'aa111'
-      }]
-    }, {
-      name: 'Test 1',
-      orderNumber: 4,
-      id: 'a11',
-      checks: [{
-        check: 'check 1',
-        orderNumber: 1,
-        id: 'aa111'
-      }, {
-        check: 'check 1',
-        orderNumber: 1,
-        id: 'aa111'
-      }, {
-        check: 'check 1',
-        orderNumber: 1,
-        id: 'aa111'
-      }, {
-        check: 'check 1',
-        orderNumber: 1,
-        id: 'aa111'
-      }]
-    },
-    {
-      name: 'Test 1',
-      orderNumber: 4,
-      id: 'a11',
-      checks: [{
-        check: 'check 1',
-        orderNumber: 1,
-        id: 'aa111'
-      }, {
-        check: 'check 1',
-        orderNumber: 1,
-        id: 'aa111'
-      }, {
-        check: 'check 1',
-        orderNumber: 1,
-        id: 'aa111'
-      }, {
-        check: 'check 1',
-        orderNumber: 1,
-        id: 'aa111'
-      }]
-    }, {
-      name: 'Test 1',
-      orderNumber: 4,
-      id: 'a11',
-    }
-  ]
-
+  @Input() selectData: SelectItem[] = []
   ngOnInit() {
   }
   onCheckboxChange(selection: SelectItem, index: number) {
@@ -137,9 +66,17 @@ export class SharedAccordionComponent {
     }
   }
 
-  onItemDropped(event: any) {
-    console.log(event)
-    // moveItemInArray(this.selectData, event.previousIndex, event.currentIndex);
+  onItemDropped(event: any, i: number) {
+    if (event.previousContainer === event.container) {
+      // Move within the same list
+      console.log(event.previousIndex, event.currentIndex)
+      let data: CheckItem[] = this.selectData[i]?.checks || [];
+      moveItemInArray(data, event.previousIndex, event.currentIndex);
+    } else {
+      console.log('fff')
+      // Move between lists
+      // transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
+    }
   }
 
 

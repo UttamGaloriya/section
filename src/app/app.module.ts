@@ -10,13 +10,17 @@ import { SectionComponent } from './component/section/section.component';
 import { SharedAccordionComponent } from './shared/shared-accordion/shared-accordion.component';
 import { FormsModule } from '@angular/forms';
 import { SharedCheckboxComponent } from './shared/shared-checkbox/shared-checkbox.component';
+import { ShareEditComponent } from './shared/share-edit/share-edit.component';
+import { ShareMatListComponent } from './shared/share-mat-list/share-mat-list.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SectionComponent,
     SharedAccordionComponent,
-    SharedCheckboxComponent
+    SharedCheckboxComponent,
+    ShareEditComponent,
+    ShareMatListComponent
   ],
   imports: [
     CommonModule,
