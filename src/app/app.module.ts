@@ -11,7 +11,7 @@ import { SharedAccordionComponent } from './shared/shared-accordion/shared-accor
 import { FormsModule } from '@angular/forms';
 import { SharedCheckboxComponent } from './shared/shared-checkbox/shared-checkbox.component';
 import { ShareEditComponent } from './shared/share-edit/share-edit.component';
-import { ShareMatListComponent } from './shared/share-mat-list/share-mat-list.component';
+
 
 @NgModule({
   declarations: [
@@ -20,7 +20,6 @@ import { ShareMatListComponent } from './shared/share-mat-list/share-mat-list.co
     SharedAccordionComponent,
     SharedCheckboxComponent,
     ShareEditComponent,
-    ShareMatListComponent
   ],
   imports: [
     CommonModule,

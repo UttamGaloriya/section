@@ -9,14 +9,16 @@ import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/dr
   styleUrls: ['./shared-accordion.component.scss']
 })
 export class SharedAccordionComponent {
+  @Input() selectData: SelectItem[] = []
   targetItems: any[] = [];
+  connectedLists: string[] = []
   @ViewChild(MatExpansionPanel) expansionPanel!: MatExpansionPanel;
 
   edit() {
     console.log("edit");
   }
-  @Input() selectData: SelectItem[] = []
   ngOnInit() {
+    this.connectedLists = this.selectData.map((list, index) => `list-${index}`);
   }
   onCheckboxChange(selection: SelectItem, index: number) {
     this.selectData[index].isCheckAll = !this.selectData[index].isCheckAll
@@ -66,18 +68,45 @@ export class SharedAccordionComponent {
     }
   }
 
-  onItemDropped(event: any, i: number) {
-    if (event.previousContainer === event.container) {
-      // Move within the same list
-      console.log(event.previousIndex, event.currentIndex)
-      let data: CheckItem[] = this.selectData[i]?.checks || [];
-      moveItemInArray(data, event.previousIndex, event.currentIndex);
+  // onItemDropped(event: CdkDragDrop<string[]>, i: number) {
+  //   if (event.previousContainer === event.container) {
+  //     // Move within the same list
+  //     console.log(event.previousIndex, event.currentIndex)
+  //     let data: CheckItem[] = this.selectData[i]?.checks || [];
+  //     moveItemInArray(data, event.previousIndex, event.currentIndex);
+  //   } else {
+  //     console.log('fff')
+  //     // Move between lists
+  //     // transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
+  //   }
+  // }
+
+  onItemDropped(event: any, listIndex: number) {
+    if (event.previousContainer !== event.container) {
+      console.log('different')
+      // Item was dropped into a different list
+      const item = event.item.data;
+      const sourceIndex = event.previousIndex;
+      const targetIndex = event.currentIndex;
+
+      // Remove the item from the source list
+      const sourceList = this.selectData.find((_, index) => index === listIndex);
+      if (sourceList && sourceList.checks) {
+        sourceList.checks.splice(sourceIndex, 1);
+      }
+
+      // Insert the item into the target list
+      const targetListIndex = this.connectedLists.indexOf(event.container.id);
+      if (targetListIndex >= 0) {
+        const targetList = this.selectData[targetListIndex];
+        if (targetList && targetList.checks) {
+          targetList.checks.splice(targetIndex, 0, item);
+        }
+      }
     } else {
-      console.log('fff')
-      // Move between lists
-      // transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
+      let data: CheckItem[] = this.selectData[listIndex]?.checks || [];
+      moveItemInArray(data, event.previousIndex, event.currentIndex);
     }
   }
-
 
 }
