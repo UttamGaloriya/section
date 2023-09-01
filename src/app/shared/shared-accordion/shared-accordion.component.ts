@@ -1,6 +1,7 @@
-import { Component, Input, ViewChild } from '@angular/core';
-import { SelectItem, selectData } from '../interface/select-item';
+import { Component, Input, ViewChild, EventEmitter } from '@angular/core';
+import { CheckItem, SelectItem, selectData } from '../interface/select-item';
 import { MatExpansionPanel } from '@angular/material/expansion';
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-shared-accordion',
@@ -8,7 +9,7 @@ import { MatExpansionPanel } from '@angular/material/expansion';
   styleUrls: ['./shared-accordion.component.scss']
 })
 export class SharedAccordionComponent {
-
+  targetItems: any[] = [];
   @ViewChild(MatExpansionPanel) expansionPanel!: MatExpansionPanel;
 
   edit() {
@@ -20,19 +21,19 @@ export class SharedAccordionComponent {
       orderNumber: 4,
       id: 'a11',
       checks: [{
-        check: 'check 1',
+        check: 'check 01',
         orderNumber: 1,
         id: 'aa111'
       }, {
-        check: 'check 1',
+        check: 'check 14',
         orderNumber: 1,
         id: 'aa111'
       }, {
-        check: 'check 1',
+        check: 'check 41',
         orderNumber: 1,
         id: 'aa111'
       }, {
-        check: 'check 1',
+        check: 'check 144',
         orderNumber: 1,
         id: 'aa111'
       }]
@@ -125,4 +126,21 @@ export class SharedAccordionComponent {
       panel.open();
     }
   }
+
+  mouseEnter(selection: SelectItem, i: number) {
+    let data = selection.checks
+    if (data == undefined) {
+      this.selectData[i].isHovered = false
+    }
+    else {
+      this.selectData[i].isHovered = true
+    }
+  }
+
+  onItemDropped(event: any) {
+    console.log(event)
+    // moveItemInArray(this.selectData, event.previousIndex, event.currentIndex);
+  }
+
+
 }

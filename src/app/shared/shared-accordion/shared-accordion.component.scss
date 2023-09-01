@@ -42,27 +42,11 @@
     top: 0px;
     right: 10px;
   }
-  //check box
-  .panel-content {
-    position: relative;
-  }
-  
-  .custom-checkbox .mat-checkbox-inner-container {
-    border-radius: 50%; /* Make the checkbox round */
-    width: 18px; /* Set the width and height to make it visually round */
-    height: 18px;
-    overflow: hidden; /* Hide the excess part of the round checkbox */
-  }
-  
-  .mat-checkbox-frame {
-    display: none; /* Hide the default checkbox frame */
-  }
-  
-  .mat-checkbox-background {
-    background-color: #ccc; /* Set background color */
-  }
-  
-  .mat-checkbox-ripple {
-    display: none; /* Hide ripple effect */
-  }
-  
+  //hover
+  .mat-expansion-panel:not(.mat-expanded) .mat-expansion-panel-header:hover:not([aria-disabled=true]) {
+    background: #F5FAFC;
+}
+//check box
+.section-panel .allActive{
+    background-color:#fff4e6 ;
+}

@@ -9,12 +9,14 @@ import { CommonModule } from '@angular/common';
 import { SectionComponent } from './component/section/section.component';
 import { SharedAccordionComponent } from './shared/shared-accordion/shared-accordion.component';
 import { FormsModule } from '@angular/forms';
+import { SharedCheckboxComponent } from './shared/shared-checkbox/shared-checkbox.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SectionComponent,
-    SharedAccordionComponent
+    SharedAccordionComponent,
+    SharedCheckboxComponent
   ],
   imports: [
     CommonModule,

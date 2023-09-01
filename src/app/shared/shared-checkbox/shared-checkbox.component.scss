@@ -1,0 +1,18 @@
+/* Customize the checkbox icon */
+.mat-checkbox-frame {
+    border-radius: 50%;
+  }
+  
+  /* Customize the checkbox's checked state */
+  .mat-checkbox-checked.mat-accent .mat-checkbox-background,
+  .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+    background-color: #007bff; /* Change to your desired color */
+    border-color: #007bff; /* Change to your desired color */
+  }
+  
+  /* Customize the checkbox's unchecked state */
+  .mat-checkbox.mat-accent .mat-checkbox-background {
+    background-color: #fff; /* Change to your desired background color */
+    border-color: #ccc; /* Change to your desired border color */
+  }
+  
