@@ -94,11 +94,11 @@ export class SharedAccordionComponent {
 
   onItemDropped(event: any, listIndex: number) {
     console.log(event)
+
     if (event.previousContainer !== event.container) {
       const item = event.item.data;
-      let index = event.container.id
-      index = index.charAt(index.length - 1)
-      index = parseInt(index)
+      let stringId = event.container.id
+      let index = parseInt(stringId.replace('list-', ''))
 
       let selectIndex = item[1]
       let checkIndex = item[2]
@@ -116,5 +116,7 @@ export class SharedAccordionComponent {
       moveItemInArray(data, event.previousIndex, event.currentIndex);
     }
   }
-
+  onItemDroppedAccordion(event: any) {
+    moveItemInArray(this.selectData, event.previousIndex, event.currentIndex);
+  }
 }

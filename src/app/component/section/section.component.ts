@@ -30,7 +30,7 @@ export class SectionComponent {
         id: 'aa111'
       }]
     }, {
-      name: 'Test 1',
+      name: 'Test 12',
       orderNumber: 4,
       id: 'a11',
       checks: [{
@@ -52,7 +52,7 @@ export class SectionComponent {
       }]
     },
     {
-      name: 'Test 1',
+      name: 'Test 13',
       orderNumber: 4,
       id: 'a11',
       checks: [{
@@ -73,7 +73,7 @@ export class SectionComponent {
         id: 'aa111'
       }]
     }, {
-      name: 'Test 1',
+      name: 'Test 14',
       orderNumber: 4,
       id: 'a11',
     }
