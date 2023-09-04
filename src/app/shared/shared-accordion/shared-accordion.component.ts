@@ -1,6 +1,6 @@
 import { Component, Input, ViewChild, EventEmitter } from '@angular/core';
 import { CheckItem, SelectItem, selectData } from '../interface/select-item';
-import { MatExpansionPanel } from '@angular/material/expansion';
+import { MatAccordion, MatExpansionPanel } from '@angular/material/expansion';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
 @Component({
@@ -13,12 +13,17 @@ export class SharedAccordionComponent {
   targetItems: any[] = [];
   connectedLists: string[] = []
   @ViewChild(MatExpansionPanel) expansionPanel!: MatExpansionPanel;
+  @ViewChild(MatAccordion) accordion!: MatAccordion;
 
   edit() {
     console.log("edit");
   }
   ngOnInit() {
+
     this.connectedLists = this.selectData.map((list, index) => `list-${index}`);
+  }
+  ngAfterViewInit() {
+    this.accordion.openAll()
   }
   onCheckboxChange(selection: SelectItem, index: number) {
     this.selectData[index].isCheckAll = !this.selectData[index].isCheckAll
@@ -106,17 +111,26 @@ export class SharedAccordionComponent {
       checksData.drop = true
       let checksValue = this.selectData[index].checks
       if (checksValue !== undefined) {
-        this.selectData[index].checks?.push(item[0])
+        this.selectData[index].checks?.splice(event.currentIndex, 0, checksData)
         this.selectData[selectIndex].checks?.splice(checkIndex, 1)
       } else {
         this.selectData[index].checks = [item[0]]
+        this.selectData[selectIndex].checks?.splice(checkIndex, 1)
       }
     } else {
       let data: CheckItem[] = this.selectData[listIndex]?.checks || [];
-      moveItemInArray(data, event.previousIndex, event.currentIndex);
+      this.swapListData(data, event.previousIndex, event.currentIndex)
     }
   }
+
   onItemDroppedAccordion(event: any) {
-    moveItemInArray(this.selectData, event.previousIndex, event.currentIndex);
+    this.swapListData(this.selectData, event.previousIndex, event.currentIndex)
   }
+
+  swapListData(data: any, previousIndex: number, currentIndex: number) {
+    let tempData = data[previousIndex]
+    data[previousIndex] = data[currentIndex]
+    data[currentIndex] = tempData
+  }
+
 }

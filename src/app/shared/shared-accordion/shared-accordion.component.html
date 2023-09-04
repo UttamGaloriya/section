@@ -1,15 +1,21 @@
-<mat-accordion class="section-panel" multi>
+<button mat-button (click)="accordion.openAll()">Expand All</button>
+<mat-accordion class="section-panel" multi cdkDropList (cdkDropListDropped)="onItemDroppedAccordion($event)">
     <ng-container *ngFor="let selection of selectData ,let i=index">
-        <mat-expansion-panel class="mat-accordion-panel" id="list-{{ i }}" cdkDropList [cdkDropListData]="selection.checks" (cdkDropListDropped)="onItemDropped($event, i)" [cdkDropListConnectedTo]="connectedLists" (mouseenter)="mouseEnter(selection ,i)" (mouseleave)="mouseleave(selection,i)" #expansionPanel [ngClass]="selection.isCheckAll ==true? 'allActive' :''" [disabled]="!selection.checks?.length">
+        <mat-expansion-panel cdkDrag class="mat-accordion-panel" id="list-{{ i }}" cdkDropList [cdkDropListData]="selection.checks" (cdkDropListDropped)="onItemDropped($event, i)" [cdkDropListConnectedTo]="connectedLists" (mouseenter)="mouseEnter(selection ,i)" (mouseleave)="mouseleave(selection,i)" #expansionPanel [ngClass]="selection.isCheckAll ==true? 'allActive' :''" [disabled]="!selection.checks?.length">
+            <div *cdkDragPreview class="drag-dop-preview">
+                {{selection.name}}
+            </div>
             <mat-expansion-panel-header class="mat-header-panel">
 
                 <mat-panel-title class="custom-panel-header">
                     <div class="check-panel">
                         <mat-checkbox [checked]="selection.isCheckAll" [style.opacity]="selection.isHovered ? 1 : 0" class="custom-checkbox" (change)="onCheckboxChange(selection ,i)"></mat-checkbox>
                     </div>
+                    <span class="order-number">{{i+1}}</span>
                     <div class="title-panel">
                         <span class="custom-heading">{{selection.name}}</span>
                         <span class="custom-sub-heading" *ngIf="selection.checks?.length">{{selection.checks?.length}} checks</span>
+                        <span class="custom-sub-heading" *ngIf="!selection.checks?.length">0 checks</span>
                     </div>
                 </mat-panel-title>
                 <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
