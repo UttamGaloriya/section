@@ -1,7 +1,7 @@
 <mat-accordion class="section-panel" multi>
     <ng-container *ngFor="let selection of selectData ,let i=index">
-        <mat-expansion-panel id="list-{{ i }}" cdkDropList [cdkDropListData]="selection.checks" (cdkDropListDropped)="onItemDropped($event, i)" [cdkDropListConnectedTo]="connectedLists" (mouseenter)="mouseEnter(selection ,i)" (mouseleave)="selection.isHovered = false" #expansionPanel [ngClass]="selection.isCheckAll ==true? 'allActive' :''" [disabled]="!selection.checks?.length">
-            <mat-expansion-panel-header>
+        <mat-expansion-panel class="mat-accordion-panel" id="list-{{ i }}" cdkDropList [cdkDropListData]="selection.checks" (cdkDropListDropped)="onItemDropped($event, i)" [cdkDropListConnectedTo]="connectedLists" (mouseenter)="mouseEnter(selection ,i)" (mouseleave)="mouseleave(selection,i)" #expansionPanel [ngClass]="selection.isCheckAll ==true? 'allActive' :''" [disabled]="!selection.checks?.length">
+            <mat-expansion-panel-header class="mat-header-panel">
 
                 <mat-panel-title class="custom-panel-header">
                     <div class="check-panel">
@@ -27,28 +27,34 @@
                 </mat-menu>
             </mat-expansion-panel-header>
             <mat-list>
-                <mat-list-item class="mat-accordion-list" *ngFor="let check of selection.checks || [], let checkNumber=index" (mouseenter)="check.isHovered = true" (mouseleave)="check.isHovered = false" [ngClass]="check.isCheck ==true? 'allActive' :''" cdkDrag [cdkDragData]="[check ,i,checkNumber]">
-                    <div class="mat-list-details">
-                        <mat-checkbox [checked]="check.isCheck" [style.opacity]="check.isHovered ? 1 : 0" class="custom-checkbox" (change)="onCheckboxListChange(selection ,i,checkNumber)"> </mat-checkbox>
-                        <span>{{checkNumber}}</span>
-                        <div class="custom-sub-heading">
+                <ng-container *ngFor="let check of selection.checks || [], let checkNumber=index">
+                    <mat-list-item class="mat-accordion-list" (mouseenter)="check.isHovered = true" (mouseleave)="mouseLeaveList(i,checkNumber)" [ngClass]="check.isCheck ==true? 'allActive' :''" cdkDrag [cdkDragData]="[check ,i,checkNumber]">
+                        <div *cdkDragPreview class="drag-dop-preview">
                             {{check.check}}
                         </div>
-                        <button mat-icon-button [matMenuTriggerFor]="menu" class="more-vernt">
-                            <mat-icon>more_vert</mat-icon>
-                        </button>
-                    </div>
-                    <mat-menu #menu="matMenu">
-                        <button mat-menu-item>
-                            <mat-icon>delete</mat-icon>
-                            <span>Delete</span>
-                        </button>
-                        <button mat-menu-item>
-                            <mat-icon>edit</mat-icon>
-                            <span>Edit</span>
-                        </button>
-                    </mat-menu>
-                </mat-list-item>
+                        <div class="mat-list-details">
+                            <mat-checkbox [checked]="check.isCheck" [style.opacity]="check.isHovered ? 1 : 0" class="custom-checkbox" (change)="onCheckboxListChange(selection ,i,checkNumber)"> </mat-checkbox>
+                            <span>{{checkNumber + 1}}</span>
+                            <div class="custom-sub-heading">
+                                {{check.check}}
+                            </div>
+                            <button mat-icon-button [matMenuTriggerFor]="menu" class="more-vernt">
+                                <mat-icon>more_vert</mat-icon>
+                            </button>
+                        </div>
+                        <mat-menu #menu="matMenu">
+                            <button mat-menu-item>
+                                <mat-icon>delete</mat-icon>
+                                <span>Delete</span>
+                            </button>
+                            <button mat-menu-item>
+                                <mat-icon>edit</mat-icon>
+                                <span>Edit</span>
+                            </button>
+                        </mat-menu>
+                    </mat-list-item>
+
+                </ng-container>
             </mat-list>
 
         </mat-expansion-panel>

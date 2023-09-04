@@ -24,9 +24,9 @@ export class SharedAccordionComponent {
     this.selectData[index].isCheckAll = !this.selectData[index].isCheckAll
     let toggle = this.selectData[index].isCheckAll
     if (toggle) {
-      this.selectData[index].checks?.map(res => res.isCheck = true)
+      this.selectData[index].checks?.map(res => { res.isCheck = true, res.isHovered = true })
     } else {
-      this.selectData[index].checks?.map(res => res.isCheck = false)
+      this.selectData[index].checks?.map(res => { res.isCheck = false, res.isHovered = false })
     }
   }
 
@@ -68,26 +68,53 @@ export class SharedAccordionComponent {
     }
   }
 
+  mouseleave(selection: SelectItem, i: number) {
+    let data = selection.checks;
+    if (data == undefined) {
+      this.selectData[i].isHovered = false
+    } else if (selection.isCheckAll == true) {
+      this.selectData[i].isHovered = true
+    } else {
+      this.selectData[i].isHovered = false
+    }
+  }
+
+
+  mouseLeaveList(index: number, indexList: number) {
+    let data = this.selectData[index].checks
+    if (data !== undefined) {
+      if (data[indexList].isCheck == true) {
+        data[indexList].isHovered = true
+      } else {
+        data[indexList].isHovered = false
+      }
+    }
+  }
 
 
   onItemDropped(event: any, listIndex: number) {
+    console.log(event)
     if (event.previousContainer !== event.container) {
       const item = event.item.data;
-      let data = event.container.id
-      data = data.charAt(data.length - 1)
-      data = parseInt(data)
+      let index = event.container.id
+      index = index.charAt(index.length - 1)
+      index = parseInt(index)
 
       let selectIndex = item[1]
       let checkIndex = item[2]
-      this.selectData[data].checks?.push(item[0])
-      this.selectData[selectIndex].checks?.splice(checkIndex, 1)
-
-      console.log(item, data)
-
+      let checksData = item[0]
+      checksData.drop = true
+      let checksValue = this.selectData[index].checks
+      if (checksValue !== undefined) {
+        this.selectData[index].checks?.push(item[0])
+        this.selectData[selectIndex].checks?.splice(checkIndex, 1)
+      } else {
+        this.selectData[index].checks = [item[0]]
+      }
     } else {
       let data: CheckItem[] = this.selectData[listIndex]?.checks || [];
       moveItemInArray(data, event.previousIndex, event.currentIndex);
     }
   }
-  // [cdkDragData] = "[check ,i,checkNumber]"
+
 }

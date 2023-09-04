@@ -1,7 +1,13 @@
 .example-action-buttons {
     padding-bottom: 20px;
   }
-  
+
+.mat-expansion-panel-header {
+    height: 60px;
+}
+  .mat-accordion-panel .mat-header-panel{
+    background-color: #f4f2ee;
+  }
   .example-headers-align .mat-expansion-panel-header-description {
     justify-content: space-between;
     align-items: center;
@@ -49,4 +55,34 @@
 //check box
 .section-panel .allActive{
     background-color:#fff4e6 ;
+}
+.check-panel .mat-mdc-checkbox.mat-accent {
+  --mdc-checkbox-selected-hover-icon-color: #0078B3;
+  --mdc-checkbox-selected-icon-color: #0078B3;
+  --mdc-checkbox-selected-pressed-icon-color: #0078B3;
+}
+.mat-list-details .mat-mdc-checkbox.mat-accent {
+  --mdc-checkbox-selected-hover-icon-color:#FFA02F;
+  --mdc-checkbox-selected-icon-color: #FFA02F;
+  --mdc-checkbox-selected-pressed-icon-color: #FFA02F;
+}
+//accordion
+.mat-accordion-panel{
+  margin-bottom: 10px;
+}
+.mat-mdc-form-field .mdc-checkbox .mdc-checkbox__background {
+border-radius: 50% !important;
+}
+.mdc-list-item {
+  padding-left: 0px;
+}
+
+.drag-dop-preview{
+  display: flex;
+  width: 251px;
+  height: 25px;
+  padding: 7px 220px 7px 8px;
+  align-items: center;
+  flex-shrink: 0;
+  background-color: #E0EEF5;
 }
