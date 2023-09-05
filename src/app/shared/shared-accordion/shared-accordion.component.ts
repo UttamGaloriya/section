@@ -14,6 +14,7 @@ export class SharedAccordionComponent {
   connectedLists: string[] = []
   @ViewChild(MatExpansionPanel) expansionPanel!: MatExpansionPanel;
   @ViewChild(MatAccordion) accordion!: MatAccordion;
+  dropLimit: number = 3
   selectedItems: any[] = [];
   edit() {
     console.log("edit");
@@ -30,8 +31,11 @@ export class SharedAccordionComponent {
     let toggle = this.selectData[index].isCheckAll
     if (toggle) {
       this.selectData[index].checks?.map(res => { res.isCheck = true, res.isHovered = true })
+      this.selectedItems = this.getUniqueValues(this.selectedItems, this.selectData[index].checks)
+
     } else {
       this.selectData[index].checks?.map(res => { res.isCheck = false, res.isHovered = false })
+      this.selectedItems = this.removeCommonValues(this.selectedItems, this.selectData[index].checks)
     }
   }
 
@@ -44,7 +48,7 @@ export class SharedAccordionComponent {
       } else {
         specificCheck.isCheck = true
       }
-      this.toggleItemSelection(specificCheck, index, checkNumber)
+      this.toggleItemSelection(specificCheck)
     }
 
     let checkData = check?.filter(res => res.isCheck == true)
@@ -67,7 +71,7 @@ export class SharedAccordionComponent {
 
   mouseEnter(selection: SelectItem, i: number) {
     let data = selection.checks
-    if (data == undefined) {
+    if (data == undefined || data.length == 0) {
       this.selectData[i].isHovered = false
     }
     else {
@@ -142,7 +146,7 @@ export class SharedAccordionComponent {
   }
 
   //multiple item selected
-  toggleItemSelection(item: any, listIndex: number, checkIndex: number) {
+  toggleItemSelection(item: any) {
     const index = this.selectedItems.indexOf(item);
     if (index === -1) {
       this.selectedItems.push(item);
@@ -171,8 +175,8 @@ export class SharedAccordionComponent {
       temp.push(data)
       this.selectData[selectIndex].checks = temp
     }
-
   }
+
   resetValues(dataArray: SelectItem[]) {
     dataArray.forEach((item) => {
       item.isHovered = false;
@@ -185,5 +189,20 @@ export class SharedAccordionComponent {
       }
     });
     this.selectedItems = []
+  }
+
+  removeCommonValues(arr1: any, arr2: any) {
+    const set2 = new Set(arr2);
+    const uniqueArray1 = arr1.filter((value: unknown) => !set2.has(value));
+    const uniqueArray2 = arr2.filter((value: unknown) => !set2.has(value));
+    console.log(uniqueArray1)
+    return [uniqueArray1];
+  }
+
+  getUniqueValues(arr1: any, arr2: any) {
+    const combinedArray = [...arr1, ...arr2];
+    const uniqueValues = new Set(combinedArray);
+    const uniqueArray = Array.from(uniqueValues);
+    return uniqueArray;
   }
 }
