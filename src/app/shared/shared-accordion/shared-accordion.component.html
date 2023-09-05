@@ -1,4 +1,5 @@
 <button mat-button (click)="accordion.openAll()">Expand All</button>
+{{selectedItems}}
 <mat-accordion class="section-panel" multi cdkDropList (cdkDropListDropped)="onItemDroppedAccordion($event)">
     <ng-container *ngFor="let selection of selectData ,let i=index">
         <mat-expansion-panel cdkDrag class="mat-accordion-panel" id="list-{{ i }}" cdkDropList [cdkDropListData]="selection.checks" (cdkDropListDropped)="onItemDropped($event, i)" [cdkDropListConnectedTo]="connectedLists" (mouseenter)="mouseEnter(selection ,i)" (mouseleave)="mouseleave(selection,i)" #expansionPanel [ngClass]="selection.isCheckAll ==true? 'allActive' :''" [disabled]="!selection.checks?.length">
@@ -35,8 +36,9 @@
             <mat-list>
                 <ng-container *ngFor="let check of selection.checks || [], let checkNumber=index">
                     <mat-list-item class="mat-accordion-list" (mouseenter)="check.isHovered = true" (mouseleave)="mouseLeaveList(i,checkNumber)" [ngClass]="check.isCheck ==true? 'allActive' :''" cdkDrag [cdkDragData]="[check ,i,checkNumber]">
-                        <div *cdkDragPreview class="drag-dop-preview">
+                        <div *cdkDragPreview class="drag-dop-preview" [ngClass]="selectedItems.length<=3  && selectedItems.length>1? 'shadow':''">
                             {{check.check}}
+                            <span *ngIf="selectedItems.length<=3  && selectedItems.length>1" class="select-number">{{selectedItems.length}}</span>
                         </div>
                         <div class="mat-list-details">
                             <mat-checkbox [checked]="check.isCheck" [style.opacity]="check.isHovered ? 1 : 0" class="custom-checkbox" (change)="onCheckboxListChange(selection ,i,checkNumber)"> </mat-checkbox>
@@ -67,3 +69,7 @@
     </ng-container>
 </mat-accordion>
 <app-shared-checkbox></app-shared-checkbox>
+
+<div class="drag-dop-preview" [ngClass]="selectedItems.length==2 ? 'shadow':''">
+    data
+</div>

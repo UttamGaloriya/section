@@ -85,5 +85,28 @@ border-radius: 50% !important;
   align-items: center;
   flex-shrink: 0;
   background-color: #E0EEF5;
+ 
+  border: 1px solid #00000095;
+  border-radius: 5px;
+}
+.shadow{
+  position: relative;
+  -webkit-box-shadow: 7px 5px 0px 1px   #ade0fa;
+  -moz-box-shadow: 7px 5px 0px 1px   #ade0fa;
+  box-shadow: 7px 5px 0px 1px   #ade0fa;
+}
+.select-number{
+  position: absolute;
+  border-radius: 50%;
+  height: 20px;
+  width: 20px;
+  background:#ade0fa;
+  color: #000;
+  top:-10px;
+  right: -10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .order-number{margin-right: 16px;font-size: 18px;}
+.selected{background: #FFA02F;}

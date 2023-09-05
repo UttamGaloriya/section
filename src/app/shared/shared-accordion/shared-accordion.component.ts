@@ -14,7 +14,7 @@ export class SharedAccordionComponent {
   connectedLists: string[] = []
   @ViewChild(MatExpansionPanel) expansionPanel!: MatExpansionPanel;
   @ViewChild(MatAccordion) accordion!: MatAccordion;
-
+  selectedItems: any[] = [];
   edit() {
     console.log("edit");
   }
@@ -44,6 +44,7 @@ export class SharedAccordionComponent {
       } else {
         specificCheck.isCheck = true
       }
+      this.toggleItemSelection(specificCheck, index, checkNumber)
     }
 
     let checkData = check?.filter(res => res.isCheck == true)
@@ -53,6 +54,7 @@ export class SharedAccordionComponent {
     else {
       this.selectData[index].isCheckAll = false
     }
+
   }
 
   togglePanel(panel: MatExpansionPanel) {
@@ -98,29 +100,35 @@ export class SharedAccordionComponent {
 
 
   onItemDropped(event: any, listIndex: number) {
-    console.log(event)
-
     if (event.previousContainer !== event.container) {
       const item = event.item.data;
       let stringId = event.container.id
       let index = parseInt(stringId.replace('list-', ''))
-
       let selectIndex = item[1]
       let checkIndex = item[2]
       let checksData = item[0]
       checksData.drop = true
       let checksValue = this.selectData[index].checks
-      if (checksValue !== undefined) {
-        this.selectData[index].checks?.splice(event.currentIndex, 0, checksData)
-        this.selectData[selectIndex].checks?.splice(checkIndex, 1)
+      if (this.selectedItems.length == 1) {
+        if (checksValue !== undefined) {
+          this.selectData[index].checks?.splice(event.currentIndex, 0, checksData)
+          this.selectData[selectIndex].checks?.splice(checkIndex, 1)
+        } else {
+          this.selectData[index].checks = [item[0]]
+          this.selectData[selectIndex].checks?.splice(checkIndex, 1)
+        }
       } else {
-        this.selectData[index].checks = [item[0]]
-        this.selectData[selectIndex].checks?.splice(checkIndex, 1)
+        this.selectedItems.forEach(data => {
+          this.dataTransferList(data, index)
+        });
+
       }
     } else {
       let data: CheckItem[] = this.selectData[listIndex]?.checks || [];
       this.swapListData(data, event.previousIndex, event.currentIndex)
     }
+
+    this.resetValues(this.selectData)
   }
 
   onItemDroppedAccordion(event: any) {
@@ -133,4 +141,49 @@ export class SharedAccordionComponent {
     data[currentIndex] = tempData
   }
 
+  //multiple item selected
+  toggleItemSelection(item: any, listIndex: number, checkIndex: number) {
+    const index = this.selectedItems.indexOf(item);
+    if (index === -1) {
+      this.selectedItems.push(item);
+    } else {
+      this.selectedItems.splice(index, 1);
+    }
+    console.log(this.selectedItems)
+  }
+
+  dataTransferList(data: CheckItem, selectIndex: number) {
+    data.isHovered = false
+    data.isCheck = false
+
+    const index = this.selectData.findIndex((res) => res.checks?.includes(data));
+    if (index !== -1) {
+      const checkIndex = this.selectData[index].checks?.indexOf(data);
+      if (checkIndex !== -1 && checkIndex !== undefined) {
+        this.selectData[index].checks?.splice(checkIndex, 1);
+      }
+    }
+    let selectValue = this.selectData[selectIndex].checks
+    if (selectValue !== undefined) {
+      this.selectData[selectIndex].checks?.push(data)
+    } else {
+      let temp = []
+      temp.push(data)
+      this.selectData[selectIndex].checks = temp
+    }
+
+  }
+  resetValues(dataArray: SelectItem[]) {
+    dataArray.forEach((item) => {
+      item.isHovered = false;
+      item.isCheckAll = false;
+      if (item.checks) {
+        item.checks.forEach((check) => {
+          check.isHovered = false;
+          check.isCheck = false
+        });
+      }
+    });
+    this.selectedItems = []
+  }
 }
