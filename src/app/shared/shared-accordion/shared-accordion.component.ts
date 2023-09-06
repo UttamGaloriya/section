@@ -2,6 +2,7 @@ import { Component, Input, ViewChild, EventEmitter } from '@angular/core';
 import { CheckItem, SelectItem, selectData } from '../interface/select-item';
 import { MatAccordion, MatExpansionPanel } from '@angular/material/expansion';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { SnackbarService } from '../../services/snackbar.service';
 
 @Component({
   selector: 'app-shared-accordion',
@@ -10,23 +11,26 @@ import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/dr
 })
 export class SharedAccordionComponent {
   @Input() selectData: SelectItem[] = []
+  tempSelectItem: SelectItem[] = []
   targetItems: any[] = [];
   connectedLists: string[] = []
   @ViewChild(MatExpansionPanel) expansionPanel!: MatExpansionPanel;
   @ViewChild(MatAccordion) accordion!: MatAccordion;
   dropLimit: number = 3
   selectedItems: any[] = [];
-  edit() {
-    console.log("edit");
+  constructor(private SnackbarService: SnackbarService) {
+
   }
   ngOnInit() {
-
     this.connectedLists = this.selectData.map((list, index) => `list-${index}`);
   }
   ngAfterViewInit() {
     this.accordion.openAll()
+
   }
-  onCheckboxChange(selection: SelectItem, index: number) {
+  onCheckboxChange(index: number, selection: SelectItem,) {
+
+
     this.selectData[index].isCheckAll = !this.selectData[index].isCheckAll
     let toggle = this.selectData[index].isCheckAll
     if (toggle) {
@@ -104,35 +108,42 @@ export class SharedAccordionComponent {
 
 
   onItemDropped(event: any, listIndex: number) {
-    if (event.previousContainer !== event.container) {
-      const item = event.item.data;
-      let stringId = event.container.id
-      let index = parseInt(stringId.replace('list-', ''))
-      let selectIndex = item[1]
-      let checkIndex = item[2]
-      let checksData = item[0]
-      checksData.drop = true
-      let checksValue = this.selectData[index].checks
-      if (this.selectedItems.length == 1) {
-        if (checksValue !== undefined) {
-          this.selectData[index].checks?.splice(event.currentIndex, 0, checksData)
-          this.selectData[selectIndex].checks?.splice(checkIndex, 1)
+    if (this.selectedItems.length <= this.dropLimit) {
+      if (event.previousContainer !== event.container) {
+        const item = event.item.data;
+        let stringId = event.container.id
+        let index = parseInt(stringId.replace('list-', ''))
+        let selectIndex = item[1]
+        let checkIndex = item[2]
+        let checksData = item[0]
+        checksData.drop = true
+        let checksValue = this.selectData[index].checks
+        if (this.selectedItems.length == 1) {
+          if (checksValue !== undefined) {
+            this.selectData[index].checks?.splice(event.currentIndex, 0, checksData)
+            this.selectData[selectIndex].checks?.splice(checkIndex, 1)
+          } else {
+            this.selectData[index].checks = [item[0]]
+            this.selectData[selectIndex].checks?.splice(checkIndex, 1)
+          }
         } else {
-          this.selectData[index].checks = [item[0]]
-          this.selectData[selectIndex].checks?.splice(checkIndex, 1)
+          this.selectedItems.forEach(data => {
+            this.dataTransferList(data, index)
+          });
+
         }
       } else {
-        this.selectedItems.forEach(data => {
-          this.dataTransferList(data, index)
-        });
-
+        let data: CheckItem[] = this.selectData[listIndex]?.checks || [];
+        this.swapListData(data, event.previousIndex, event.currentIndex)
       }
+      this.resetValues(this.selectData)
+      setTimeout(() => {
+
+      }, 4000)
     } else {
-      let data: CheckItem[] = this.selectData[listIndex]?.checks || [];
-      this.swapListData(data, event.previousIndex, event.currentIndex)
+      this.SnackbarService.openSnackBar()
     }
 
-    this.resetValues(this.selectData)
   }
 
   onItemDroppedAccordion(event: any) {
@@ -153,13 +164,12 @@ export class SharedAccordionComponent {
     } else {
       this.selectedItems.splice(index, 1);
     }
-    console.log(this.selectedItems)
+
+    console.log(this.tempSelectItem)
   }
 
   dataTransferList(data: CheckItem, selectIndex: number) {
-    data.isHovered = false
-    data.isCheck = false
-
+    data.isCurrentAdd = true
     const index = this.selectData.findIndex((res) => res.checks?.includes(data));
     if (index !== -1) {
       const checkIndex = this.selectData[index].checks?.indexOf(data);
@@ -185,6 +195,7 @@ export class SharedAccordionComponent {
         item.checks.forEach((check) => {
           check.isHovered = false;
           check.isCheck = false
+          check.isCurrentAdd = false
         });
       }
     });
@@ -195,7 +206,6 @@ export class SharedAccordionComponent {
     const set2 = new Set(arr2);
     const uniqueArray1 = arr1.filter((value: unknown) => !set2.has(value));
     const uniqueArray2 = arr2.filter((value: unknown) => !set2.has(value));
-    console.log(uniqueArray1)
     return [uniqueArray1];
   }
 
@@ -204,5 +214,18 @@ export class SharedAccordionComponent {
     const uniqueValues = new Set(combinedArray);
     const uniqueArray = Array.from(uniqueValues);
     return uniqueArray;
+  }
+
+  handleButtonClick(event: Event) {
+    event.stopPropagation();
+  }
+
+
+  undo() {
+    console.log(this.selectData, this.tempSelectItem)
+  }
+  tempDataUpdate(data: any) {
+    console.log(data)
+    this.tempSelectItem = [...data]
   }
 }

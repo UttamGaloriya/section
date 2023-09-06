@@ -33,6 +33,7 @@
   }
   //
   .mat-accordion-list{
+    z-index: 10;
     position: relative;
   }
   .mat-list-details{
@@ -47,6 +48,7 @@
     position: absolute;
     top: 0px;
     right: 10px;
+    z-index: 90;
   }
   //hover
   .mat-expansion-panel:not(.mat-expanded) .mat-expansion-panel-header:hover:not([aria-disabled=true]) {
@@ -110,3 +112,13 @@ border-radius: 50% !important;
 }
 .order-number{margin-right: 16px;font-size: 18px;}
 .selected{background: #FFA02F;}
+
+.currentAdd{
+  border: 1px solid transparent;
+  animation-name: borderCurrent;
+  animation-duration: 3s;
+}
+@keyframes borderCurrent {
+  from {border: 3px solid #63d867;}
+  to {border: 1px solid #63d867;}
+}

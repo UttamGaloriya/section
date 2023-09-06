@@ -16,7 +16,8 @@ export interface CheckItem {
     showAddCheck?: boolean;
     isHovered?: boolean;
     isCheck?: boolean;
-    drop?: boolean
+    drop?: boolean;
+    isCurrentAdd?: boolean
 }
 
 

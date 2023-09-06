@@ -1,5 +1,4 @@
-<button mat-button (click)="accordion.openAll()">Expand All</button>
-{{selectedItems}}
+<button mat-button (click)="undo()">Undo</button>
 <mat-accordion class="section-panel" multi cdkDropList (cdkDropListDropped)="onItemDroppedAccordion($event)">
     <ng-container *ngFor="let selection of selectData ,let i=index">
         <mat-expansion-panel cdkDrag class="mat-accordion-panel" id="list-{{ i }}" cdkDropList [cdkDropListData]="selection.checks" (cdkDropListDropped)="onItemDropped($event, i)" [cdkDropListConnectedTo]="connectedLists" (mouseenter)="mouseEnter(selection ,i)" (mouseleave)="mouseleave(selection,i)" #expansionPanel [ngClass]="selection.isCheckAll ==true? 'allActive' :''" [disabled]="!selection.checks?.length">
@@ -10,7 +9,7 @@
 
                 <mat-panel-title class="custom-panel-header">
                     <div class="check-panel">
-                        <mat-checkbox [checked]="selection.isCheckAll" [style.opacity]="selection.isHovered ? 1 : 0" class="custom-checkbox" (change)="onCheckboxChange(selection ,i)"></mat-checkbox>
+                        <mat-checkbox [checked]="selection.isCheckAll" [style.opacity]="selection.isHovered ? 1 : 0" class="custom-checkbox" (change)="onCheckboxChange(i,selection)" (click)="handleButtonClick($event)"></mat-checkbox>
                     </div>
                     <span class="order-number">{{i+1}}</span>
                     <div class="title-panel">
@@ -19,7 +18,7 @@
                         <span class="custom-sub-heading" *ngIf="!selection.checks?.length">0 checks</span>
                     </div>
                 </mat-panel-title>
-                <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                <button mat-icon-button (click)="handleButtonClick($event)" [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
@@ -35,21 +34,22 @@
             </mat-expansion-panel-header>
             <mat-list>
                 <ng-container *ngFor="let check of selection.checks || [], let checkNumber=index">
-                    <mat-list-item class="mat-accordion-list" (click)="onCheckboxListChange(selection ,i,checkNumber)" (mouseenter)="check.isHovered = true" (mouseleave)="mouseLeaveList(i,checkNumber)" [ngClass]="check.isCheck ==true? 'allActive' :''" cdkDrag [cdkDragData]="[check ,i,checkNumber]">
+                    <mat-list-item class="mat-accordion-list" (mouseenter)="check.isHovered = true" (mouseleave)="mouseLeaveList(i,checkNumber)" [ngClass]="check.isCheck ==true? 'allActive' :''" cdkDrag [cdkDragData]="[check ,i,checkNumber]">
                         <div *cdkDragPreview class="drag-dop-preview" [ngClass]="selectedItems.length<=dropLimit  && selectedItems.length>1? 'shadow':''">
                             {{check.check}}
                             <span *ngIf="selectedItems.length<=dropLimit && selectedItems.length>1" class="select-number">{{selectedItems.length}}</span>
                         </div>
-                        <div class="mat-list-details">
+                        <div class="mat-list-details" (click)="onCheckboxListChange(selection ,i,checkNumber)" [ngClass]="check.isCurrentAdd ? 'currentAdd':''">
                             <mat-checkbox [checked]="check.isCheck" [style.opacity]="check.isHovered ? 1 : 0" class="custom-checkbox"> </mat-checkbox>
                             <span>{{checkNumber + 1}}</span>
                             <div class="custom-sub-heading">
                                 {{check.check}}
                             </div>
-                            <button mat-icon-button [matMenuTriggerFor]="menu" class="more-vernt">
-                                <mat-icon>more_vert</mat-icon>
-                            </button>
+
                         </div>
+                        <button mat-icon-button [matMenuTriggerFor]="menu" class="more-vernt">
+                            <mat-icon>more_vert</mat-icon>
+                        </button>
                         <mat-menu #menu="matMenu">
                             <button mat-menu-item>
                                 <mat-icon>delete</mat-icon>
