@@ -45,25 +45,26 @@ export class SharedAccordionComponent {
   }
 
   onCheckboxListChange(selection: SelectItem, index: number, checkNumber: number) {
-    let check = this.selectData[index]?.checks
-    if (check != undefined) {
-      let specificCheck = check[checkNumber] ?? [];
-      if (specificCheck.isCheck) {
-        specificCheck.isCheck = !specificCheck.check
-      } else {
-        specificCheck.isCheck = true
+    if (this.selectData.length !== 1) {
+      let check = this.selectData[index]?.checks
+      if (check != undefined) {
+        let specificCheck = check[checkNumber] ?? [];
+        if (specificCheck.isCheck) {
+          specificCheck.isCheck = !specificCheck.check
+        } else {
+          specificCheck.isCheck = true
+        }
+        this.toggleItemSelection(specificCheck)
       }
-      this.toggleItemSelection(specificCheck)
-    }
 
-    let checkData = check?.filter(res => res.isCheck == true)
-    if (checkData?.length == check?.length) {
-      this.selectData[index].isCheckAll = true
+      let checkData = check?.filter(res => res.isCheck == true)
+      if (checkData?.length == check?.length) {
+        this.selectData[index].isCheckAll = true
+      }
+      else {
+        this.selectData[index].isCheckAll = false
+      }
     }
-    else {
-      this.selectData[index].isCheckAll = false
-    }
-
   }
 
   togglePanel(panel: MatExpansionPanel) {
@@ -111,6 +112,11 @@ export class SharedAccordionComponent {
   onItemDropped(event: any, listIndex: number) {
     if (this.selectedItems.length <= this.dropLimit) {
       if (event.previousContainer !== event.container) {
+        console.log(event.previousContainer.data,
+          event.container.data,
+          event.previousIndex,
+          event.currentIndex,)
+
         const item = event.item.data;
         let stringId = event.container.id
         let index = parseInt(stringId.replace('list-', ''))
@@ -137,10 +143,6 @@ export class SharedAccordionComponent {
         let data: CheckItem[] = this.selectData[listIndex]?.checks || [];
         this.swapListData(data, event.previousIndex, event.currentIndex)
       }
-      this.resetValues(this.selectData)
-      setTimeout(() => {
-
-      }, 4000)
     } else {
       this.SnackbarService.openSnackBar()
     }

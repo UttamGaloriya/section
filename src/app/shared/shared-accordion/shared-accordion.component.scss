@@ -142,4 +142,8 @@ border-radius: 50% !important;
   .mdc-list .custom-sub-heading{
     margin-left: 30px;
   }
-
+.section-panel{
+  .checkNone  .check-panel  , .checkNone .custom-checkbox{
+    opacity: 0;
+  }
+}

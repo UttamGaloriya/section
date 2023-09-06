@@ -81,5 +81,28 @@ export class SectionComponent {
       id: this.generateUniqueId(),
     }
   ]
-
+  // selectData = [
+  //   {
+  //     name: 'Test 1',
+  //     orderNumber: 4,
+  //     id: this.generateUniqueId(),
+  //     checks: [{
+  //       check: 'check 01',
+  //       orderNumber: 1,
+  //       id: this.generateUniqueId()
+  //     }, {
+  //       check: 'check 14',
+  //       orderNumber: 1,
+  //       id: this.generateUniqueId()
+  //     }, {
+  //       check: 'check 41',
+  //       orderNumber: 1,
+  //       id: this.generateUniqueId()
+  //     }, {
+  //       check: 'check 144',
+  //       orderNumber: 1,
+  //       id: this.generateUniqueId()
+  //     }]
+  //   }
+  // ]
 }
