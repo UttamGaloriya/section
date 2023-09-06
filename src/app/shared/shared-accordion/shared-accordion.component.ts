@@ -1,7 +1,7 @@
 import { Component, Input, ViewChild, EventEmitter } from '@angular/core';
 import { CheckItem, SelectItem, selectData } from '../interface/select-item';
 import { MatAccordion, MatExpansionPanel } from '@angular/material/expansion';
-import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, CdkDragEnd, CdkDragEnter, CdkDragStart, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { SnackbarService } from '../../services/snackbar.service';
 
 @Component({
@@ -16,7 +16,8 @@ export class SharedAccordionComponent {
   connectedLists: string[] = []
   @ViewChild(MatExpansionPanel) expansionPanel!: MatExpansionPanel;
   @ViewChild(MatAccordion) accordion!: MatAccordion;
-  dropLimit: number = 3
+  dropLimit: number = 3;
+  dragActive: boolean = false
   selectedItems: any[] = [];
   constructor(private SnackbarService: SnackbarService) {
 
@@ -220,7 +221,6 @@ export class SharedAccordionComponent {
     event.stopPropagation();
   }
 
-
   undo() {
     console.log(this.selectData, this.tempSelectItem)
   }
@@ -228,4 +228,19 @@ export class SharedAccordionComponent {
     console.log(data)
     this.tempSelectItem = [...data]
   }
+
+  //drag event
+  dragEnter(event: CdkDragStart, index: number) {
+    console.log("start")
+    this.selectData[index].isDragStart = true
+    console.log(this.selectData[index].isDragStart)
+  }
+  dragEnd(event: CdkDragEnd, index: number) {
+    console.log("end")
+    this.selectData[index].isDragStart = false
+    console.log(this.selectData[index].isDragStart)
+  }
+
+
+
 }

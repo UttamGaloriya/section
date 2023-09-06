@@ -7,3 +7,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     border-radius: 50% !important;
     }
     
+ .container .mat-expansion-panel-body{
+        padding: 0px ;
+      }
+      .container .dragActive{
+        background-color: black;
+      }

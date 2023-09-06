@@ -6,7 +6,8 @@ export interface SelectItem {
     showEditState?: boolean;
     showAddCheck?: boolean;
     isHovered?: boolean;
-    isCheckAll?: boolean
+    isCheckAll?: boolean;
+    isDragStart?: boolean
 };
 export interface CheckItem {
     check: string;
@@ -17,7 +18,8 @@ export interface CheckItem {
     isHovered?: boolean;
     isCheck?: boolean;
     drop?: boolean;
-    isCurrentAdd?: boolean
+    isCurrentAdd?: boolean;
+    isDragStart?: boolean
 }
 
 

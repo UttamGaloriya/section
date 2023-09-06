@@ -5,9 +5,7 @@
 .mat-expansion-panel-header {
     height: 60px;
 }
-  .mat-accordion-panel .mat-header-panel{
-    background-color: #f4f2ee;
-  }
+
   .example-headers-align .mat-expansion-panel-header-description {
     justify-content: space-between;
     align-items: center;
@@ -47,7 +45,7 @@
   .more-vernt{
     position: absolute;
     top: 0px;
-    right: 10px;
+    right: 30px;
     z-index: 90;
   }
   //hover
@@ -55,9 +53,7 @@
     background: #F5FAFC;
 }
 //check box
-.section-panel .allActive{
-    background-color:#fff4e6 ;
-}
+
 .check-panel .mat-mdc-checkbox.mat-accent {
   --mdc-checkbox-selected-hover-icon-color: #0078B3;
   --mdc-checkbox-selected-icon-color: #0078B3;
@@ -76,7 +72,7 @@
 border-radius: 50% !important;
 }
 .mdc-list-item {
-  padding-left: 0px;
+  padding:0px 24px;
 }
 
 .drag-dop-preview{
@@ -122,3 +118,28 @@ border-radius: 50% !important;
   from {border: 3px solid #63d867;}
   to {border: 1px solid #63d867;}
 }
+.mat-accordion-panel .notAllActive{
+  background-color: #f4f2ee;
+}
+.mat-accordion-panel .allActive{
+  background-color: #E0EEF5;
+}
+
+.activeCheck{
+  background: #fff4e6;
+}
+.mdc-list{
+  padding: 0;
+}
+
+.cdk-drag-placeholder {
+  background: #fff4e6;
+  }
+  .cdk-drag-placeholder  .notAllActive,  .cdk-drag-placeholder .allActive{
+    background: #fff4e6; 
+    background-color:#fff4e6 ;
+  }
+  .mdc-list .custom-sub-heading{
+    margin-left: 30px;
+  }
+
