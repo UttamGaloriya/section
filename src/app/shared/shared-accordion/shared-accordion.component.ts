@@ -18,7 +18,8 @@ export class SharedAccordionComponent {
   @ViewChild(MatAccordion) accordion!: MatAccordion;
   dropLimit: number = 3;
   dragActive: boolean = false
-  selectedItems: any[] = [];
+  checkedItems: CheckItem[] = [];
+  selectedItems: SelectItem[] = []
   constructor(private SnackbarService: SnackbarService) {
 
   }
@@ -26,22 +27,22 @@ export class SharedAccordionComponent {
     this.connectedLists = this.selectData.map((list, index) => `list-${index}`);
   }
   ngAfterViewInit() {
-    this.accordion.openAll()
+    // this.accordion.openAll()
 
   }
   onCheckboxChange(index: number, selection: SelectItem,) {
-
-
     this.selectData[index].isCheckAll = !this.selectData[index].isCheckAll
     let toggle = this.selectData[index].isCheckAll
+
     if (toggle) {
       this.selectData[index].checks?.map(res => { res.isCheck = true, res.isHovered = true })
-      this.selectedItems = this.getUniqueValues(this.selectedItems, this.selectData[index].checks)
-
+      this.checkedItems = this.getUniqueValuesArray(this.checkedItems, this.selectData[index].checks)
     } else {
       this.selectData[index].checks?.map(res => { res.isCheck = false, res.isHovered = false })
-      this.selectedItems = this.removeCommonValues(this.selectedItems, this.selectData[index].checks)
+      this.checkedItems = this.removeCommonValuesArray(this.checkedItems, this.selectData[index].checks)
     }
+
+    this.toggleItemSelection(this.selectData[index])
   }
 
   onCheckboxListChange(selection: SelectItem, index: number, checkNumber: number) {
@@ -54,18 +55,34 @@ export class SharedAccordionComponent {
         } else {
           specificCheck.isCheck = true
         }
-        this.toggleItemSelection(specificCheck)
+        this.toggleItemChecked(specificCheck)
       }
 
       let checkData = check?.filter(res => res.isCheck == true)
       if (checkData?.length == check?.length) {
-        this.selectData[index].isCheckAll = true
+        this.selectData[index].isCheckAll = true;
+        this.selectItemDataAdd(this.selectData[index])
       }
       else {
         this.selectData[index].isCheckAll = false
+        this.selectItemDataRemove(this.selectData[index])
       }
     }
   }
+  selectItemDataAdd(item: SelectItem) {
+    const index = this.selectedItems.findIndex((res => res.id == item.id))
+    if (index == -1) {
+      this.selectedItems.push(item)
+    }
+  }
+
+  selectItemDataRemove(item: SelectItem) {
+    const index = this.selectedItems.findIndex((res => res.id == item.id))
+    if (index >= 0) {
+      this.selectedItems.splice(index, 1)
+    }
+  }
+
 
   togglePanel(panel: MatExpansionPanel) {
     if (panel.expanded) {
@@ -76,20 +93,11 @@ export class SharedAccordionComponent {
   }
 
   mouseEnter(selection: SelectItem, i: number) {
-    let data = selection.checks
-    if (data == undefined || data.length == 0) {
-      this.selectData[i].isHovered = false
-    }
-    else {
-      this.selectData[i].isHovered = true
-    }
+    this.selectData[i].isHovered = true
   }
 
   mouseleave(selection: SelectItem, i: number) {
-    let data = selection.checks;
-    if (data == undefined) {
-      this.selectData[i].isHovered = false
-    } else if (selection.isCheckAll == true) {
+    if (selection.isCheckAll == true) {
       this.selectData[i].isHovered = true
     } else {
       this.selectData[i].isHovered = false
@@ -110,13 +118,8 @@ export class SharedAccordionComponent {
 
 
   onItemDropped(event: any, listIndex: number) {
-    if (this.selectedItems.length <= this.dropLimit) {
+    if (this.checkedItems.length <= this.dropLimit) {
       if (event.previousContainer !== event.container) {
-        console.log(event.previousContainer.data,
-          event.container.data,
-          event.previousIndex,
-          event.currentIndex,)
-
         const item = event.item.data;
         let stringId = event.container.id
         let index = parseInt(stringId.replace('list-', ''))
@@ -125,7 +128,7 @@ export class SharedAccordionComponent {
         let checksData = item[0]
         checksData.drop = true
         let checksValue = this.selectData[index].checks
-        if (this.selectedItems.length == 1) {
+        if (this.checkedItems.length == 1) {
           if (checksValue !== undefined) {
             this.selectData[index].checks?.splice(event.currentIndex, 0, checksData)
             this.selectData[selectIndex].checks?.splice(checkIndex, 1)
@@ -134,42 +137,87 @@ export class SharedAccordionComponent {
             this.selectData[selectIndex].checks?.splice(checkIndex, 1)
           }
         } else {
-          this.selectedItems.forEach(data => {
+          this.checkedItems.forEach(data => {
             this.dataTransferList(data, index)
-          });
-
+          }
+          );
         }
       } else {
         let data: CheckItem[] = this.selectData[listIndex]?.checks || [];
-        this.swapListData(data, event.previousIndex, event.currentIndex)
+        if (this.checkedItems.length = 1) {
+          this.swapListData(data, event.previousIndex, event.currentIndex)
+        } else {
+
+        }
       }
     } else {
       this.SnackbarService.openSnackBar()
     }
-
+    this.resetValues(this.selectData)
   }
 
   onItemDroppedAccordion(event: any) {
-    this.swapListData(this.selectData, event.previousIndex, event.currentIndex)
+    if (this.selectedItems.length == 1 || this.selectedItems.length == 0) {
+      this.swapListData(this.selectData, event.previousIndex, event.currentIndex)
+    } else {
+      if (event.currentIndex !== event.previousIndex) {
+        this.selectItemDataTransfer(this.selectedItems, event.currentIndex);
+      }
+    }
+
+    this.resetValues(this.selectData)
+  }
+
+  selectItemDataTransfer(data: SelectItem[], index: number) {
+    const currentData = this.selectData[index]
+    this.selectedItems.forEach((res) => {
+      let deleteIndex = this.selectData.findIndex((item) => item.id === res.id)
+      console.log(deleteIndex)
+      this.selectData.splice(deleteIndex, 1)
+    })
+    let currentIndex = this.selectData.findIndex((item) => item.id == currentData.id);
+    if (currentIndex == -1) {
+      this.selectData.push(currentData)
+      currentIndex = this.selectData.findIndex((item) => item.id == currentData.id);
+    }
+    console.log(currentIndex)
+    data.forEach((res) => {
+      ++currentIndex;
+      this.selectData.splice(currentIndex, 0, res)
+    })
+    this.selectedItems = []
+    // console.log(event, this.selectedItems)
   }
 
   swapListData(data: any, previousIndex: number, currentIndex: number) {
     let tempData = data[previousIndex]
     data[previousIndex] = data[currentIndex]
     data[currentIndex] = tempData
+
   }
 
   //multiple item selected
-  toggleItemSelection(item: any) {
+  toggleItemChecked(item: CheckItem) {
+    const index = this.checkedItems.indexOf(item);
+    if (index === -1) {
+      this.checkedItems.push(item);
+    } else {
+      this.checkedItems.splice(index, 1);
+    }
+  }
+
+
+  toggleItemSelection(item: SelectItem) {
     const index = this.selectedItems.indexOf(item);
     if (index === -1) {
       this.selectedItems.push(item);
     } else {
       this.selectedItems.splice(index, 1);
     }
-
-    console.log(this.tempSelectItem)
   }
+
+
+
 
   dataTransferList(data: CheckItem, selectIndex: number) {
     data.isCurrentAdd = true
@@ -202,17 +250,17 @@ export class SharedAccordionComponent {
         });
       }
     });
-    this.selectedItems = []
+    this.checkedItems = []
   }
 
-  removeCommonValues(arr1: any, arr2: any) {
+  removeCommonValuesArray(arr1: any, arr2: any) {
     const set2 = new Set(arr2);
     const uniqueArray1 = arr1.filter((value: unknown) => !set2.has(value));
     const uniqueArray2 = arr2.filter((value: unknown) => !set2.has(value));
     return [uniqueArray1];
   }
 
-  getUniqueValues(arr1: any, arr2: any) {
+  getUniqueValuesArray(arr1: any, arr2: any) {
     const combinedArray = [...arr1, ...arr2];
     const uniqueValues = new Set(combinedArray);
     const uniqueArray = Array.from(uniqueValues);

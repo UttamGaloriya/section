@@ -12,8 +12,8 @@ export class SectionComponent {
   }
   selectData = [
     {
-      name: 'Test 1',
-      orderNumber: 4,
+      name: 'Test 11',
+      orderNumber: 1,
       id: this.generateUniqueId(),
       checks: [{
         check: 'check 01',
@@ -21,20 +21,20 @@ export class SectionComponent {
         id: this.generateUniqueId()
       }, {
         check: 'check 14',
-        orderNumber: 1,
+        orderNumber: 2,
         id: this.generateUniqueId()
       }, {
         check: 'check 41',
-        orderNumber: 1,
+        orderNumber: 3,
         id: this.generateUniqueId()
       }, {
         check: 'check 144',
-        orderNumber: 1,
+        orderNumber: 4,
         id: this.generateUniqueId()
       }]
     }, {
       name: 'Test 12',
-      orderNumber: 4,
+      orderNumber: 2,
       id: this.generateUniqueId(),
       checks: [{
         check: 'check 1',
@@ -42,21 +42,21 @@ export class SectionComponent {
         id: this.generateUniqueId()
       }, {
         check: 'check 1',
-        orderNumber: 1,
+        orderNumber: 2,
         id: this.generateUniqueId()
       }, {
         check: 'check 1',
-        orderNumber: 1,
+        orderNumber: 3,
         id: this.generateUniqueId()
       }, {
         check: 'check 1',
-        orderNumber: 1,
+        orderNumber: 4,
         id: this.generateUniqueId()
       }]
     },
     {
       name: 'Test 13',
-      orderNumber: 4,
+      orderNumber: 3,
       id: this.generateUniqueId(),
       checks: [{
         check: 'check 1',
@@ -79,6 +79,11 @@ export class SectionComponent {
       name: 'Test 14',
       orderNumber: 4,
       id: this.generateUniqueId(),
+      checks: [{
+        check: 'check 1',
+        orderNumber: 1,
+        id: this.generateUniqueId()
+      },]
     }
   ]
   // selectData = [

@@ -119,7 +119,7 @@ border-radius: 50% !important;
   to {border: 1px solid #63d867;}
 }
 .mat-accordion-panel .notAllActive{
-  background-color: #f4f2ee;
+  background-color: #EBF5F9;
 }
 .mat-accordion-panel .allActive{
   background-color: #E0EEF5;
@@ -146,4 +146,8 @@ border-radius: 50% !important;
   .checkNone  .check-panel  , .checkNone .custom-checkbox{
     opacity: 0;
   }
+}
+
+.list-hover{
+  background:  #FFFBF7;
 }
