@@ -19,7 +19,8 @@ export class SharedAccordionComponent {
   dropLimit: number = 3;
   dragActive: boolean = false
   checkedItems: CheckItem[] = [];
-  selectedItems: SelectItem[] = []
+  selectedItems: SelectItem[] = [];
+  accordionOpen: boolean = false
   constructor(private SnackbarService: SnackbarService) {
 
   }
@@ -125,8 +126,9 @@ export class SharedAccordionComponent {
         let index = parseInt(stringId.replace('list-', ''))
         let selectIndex = item[1]
         let checkIndex = item[2]
-        let checksData = item[0]
-        checksData.drop = true
+        let checksData: CheckItem = item[0]
+        checksData.isCurrentAdd = true
+
         let checksValue = this.selectData[index].checks
         if (this.checkedItems.length == 1) {
           if (checksValue !== undefined) {
@@ -138,6 +140,7 @@ export class SharedAccordionComponent {
           }
         } else {
           this.checkedItems.forEach(data => {
+            data.isCurrentAdd = true
             this.dataTransferList(data, index)
           }
           );
@@ -148,6 +151,7 @@ export class SharedAccordionComponent {
           this.swapListData(data, event.previousIndex, event.currentIndex)
         } else {
           let currentIndex = event.currentIndex;
+          this.checkedItems.map(res => res.isCurrentAdd = true)
           for (let i = this.checkedItems.length - 1; i >= 0; i--) {
             this.sameAccordionDataTransfer(this.checkedItems[i], currentIndex, listIndex);
           }
@@ -157,14 +161,18 @@ export class SharedAccordionComponent {
     } else {
       this.SnackbarService.openSnackBar()
     }
-    this.resetValues(this.selectData)
+    this.resetValues(this.selectData);
+
+
   }
 
   onItemDroppedAccordion(event: any) {
     if (this.selectedItems.length == 1 || this.selectedItems.length == 0) {
+      this.selectData[event.previousIndex].isCurrentAdd = true
       this.swapListData(this.selectData, event.previousIndex, event.currentIndex)
     } else {
       if (event.currentIndex !== event.previousIndex) {
+        this.selectedItems.map(res => res.isCurrentAdd = true)
         this.selectItemDataTransfer(this.selectedItems, event.currentIndex);
       }
     }
@@ -185,9 +193,10 @@ export class SharedAccordionComponent {
       currentIndex = this.selectData.findIndex((item) => item.id == currentData.id);
     }
     console.log(currentIndex)
+
     data.forEach((res) => {
-      ++currentIndex;
       this.selectData.splice(currentIndex, 0, res)
+      currentIndex++;
     })
     this.selectedItems = []
   }
@@ -263,11 +272,16 @@ export class SharedAccordionComponent {
     dataArray.forEach((item) => {
       item.isHovered = false;
       item.isCheckAll = false;
+      setTimeout(() => {
+        item.isCurrentAdd = false
+      }, 4000)
       if (item.checks) {
         item.checks.forEach((check) => {
           check.isHovered = false;
           check.isCheck = false
-          check.isCurrentAdd = false
+          setTimeout(() => {
+            check.isCurrentAdd = false
+          }, 4000)
         });
       }
     });
@@ -301,17 +315,19 @@ export class SharedAccordionComponent {
   }
 
   //drag event
-  dragEnter(event: CdkDragStart, index: number) {
-    console.log("start")
-    this.selectData[index].isDragStart = true
-    console.log(this.selectData[index].isDragStart)
+  dragEnter(event: CdkDragStart) {
+    // this.accordionOpen = true
+    // this.selectData.map(res => res.isExpand = false)
   }
-  dragEnd(event: CdkDragEnd, index: number) {
-    console.log("end")
-    this.selectData[index].isDragStart = false
-    console.log(this.selectData[index].isDragStart)
+  dragEnd(event: any) {
+    // this.accordionOpen = false
   }
-
-
+  dragAccordionEnter(event: CdkDragStart) {
+    // this.accordionOpen = false
+    // this.accordion.closeAll()
+  }
+  dragAccordionEnd(event: any) {
+    // this.accordionOpen = false
+  }
 
 }

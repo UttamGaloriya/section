@@ -111,6 +111,7 @@ border-radius: 50% !important;
 
 .currentAdd{
   border: 1px solid transparent;
+  box-sizing: content-box;
   animation-name: borderCurrent;
   animation-duration: 3s;
 }
