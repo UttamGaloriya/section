@@ -20,15 +20,15 @@ export class SectionComponent {
         orderNumber: 1,
         id: this.generateUniqueId()
       }, {
-        check: 'check 14',
+        check: 'check 2',
         orderNumber: 2,
         id: this.generateUniqueId()
       }, {
-        check: 'check 41',
+        check: 'check 3',
         orderNumber: 3,
         id: this.generateUniqueId()
       }, {
-        check: 'check 144',
+        check: 'check 4',
         orderNumber: 4,
         id: this.generateUniqueId()
       }]
@@ -37,19 +37,19 @@ export class SectionComponent {
       orderNumber: 2,
       id: this.generateUniqueId(),
       checks: [{
-        check: 'check 1',
+        check: 'check 5',
         orderNumber: 1,
         id: this.generateUniqueId()
       }, {
-        check: 'check 1',
+        check: 'check 6',
         orderNumber: 2,
         id: this.generateUniqueId()
       }, {
-        check: 'check 1',
+        check: 'check 7',
         orderNumber: 3,
         id: this.generateUniqueId()
       }, {
-        check: 'check 1',
+        check: 'check 8',
         orderNumber: 4,
         id: this.generateUniqueId()
       }]
@@ -59,7 +59,7 @@ export class SectionComponent {
       orderNumber: 3,
       id: this.generateUniqueId(),
       checks: [{
-        check: 'check 1',
+        check: 'check 9',
         orderNumber: 1,
         id: this.generateUniqueId()
       }, {

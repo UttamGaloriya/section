@@ -144,9 +144,13 @@ export class SharedAccordionComponent {
         }
       } else {
         let data: CheckItem[] = this.selectData[listIndex]?.checks || [];
-        if (this.checkedItems.length = 1) {
+        if (this.checkedItems.length == 1) {
           this.swapListData(data, event.previousIndex, event.currentIndex)
         } else {
+          let currentIndex = event.currentIndex;
+          for (let i = this.checkedItems.length - 1; i >= 0; i--) {
+            this.sameAccordionDataTransfer(this.checkedItems[i], currentIndex, listIndex);
+          }
 
         }
       }
@@ -164,9 +168,9 @@ export class SharedAccordionComponent {
         this.selectItemDataTransfer(this.selectedItems, event.currentIndex);
       }
     }
-
     this.resetValues(this.selectData)
   }
+
 
   selectItemDataTransfer(data: SelectItem[], index: number) {
     const currentData = this.selectData[index]
@@ -186,7 +190,6 @@ export class SharedAccordionComponent {
       this.selectData.splice(currentIndex, 0, res)
     })
     this.selectedItems = []
-    // console.log(event, this.selectedItems)
   }
 
   swapListData(data: any, previousIndex: number, currentIndex: number) {
@@ -216,8 +219,26 @@ export class SharedAccordionComponent {
     }
   }
 
+  //error
+  sameAccordionDataTransfer(data: CheckItem, selectIndex: number, listIndex: number) {
+    console.log(selectIndex)
+    let tempData = this.selectData[listIndex].checks
+    let currentData: CheckItem
+    if (tempData !== undefined) {
+      currentData = tempData[selectIndex]
+      console.log(currentData)
+    }
+    const index = this.selectData.findIndex((res) => res.checks?.includes(data));
+    if (index !== -1) {
+      const checkIndex = this.selectData[index].checks?.indexOf(data);
+      if (checkIndex !== -1 && checkIndex !== undefined) {
+        this.selectData[index].checks?.splice(checkIndex, 1);
+      }
+    }
 
-
+    let currentIndexId = this.selectData[listIndex].checks?.findIndex((res) => res.id = currentData.id) || 0
+    this.selectData[listIndex].checks?.splice(currentIndexId, 0, data)
+  }
 
   dataTransferList(data: CheckItem, selectIndex: number) {
     data.isCurrentAdd = true
