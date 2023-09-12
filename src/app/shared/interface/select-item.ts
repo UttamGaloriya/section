@@ -10,6 +10,7 @@ export interface SelectItem {
     isDragStart?: boolean;
     isExpand?: boolean;
     isCurrentAdd?: boolean;
+    isHeaderHover?: boolean
 };
 export interface CheckItem {
     check: string;

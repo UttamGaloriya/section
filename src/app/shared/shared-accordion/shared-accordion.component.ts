@@ -21,8 +21,10 @@ export class SharedAccordionComponent {
   checkedItems: CheckItem[] = [];
   selectedItems: SelectItem[] = [];
   accordionOpen: boolean = false
-  undoOpen: boolean = false
-  dragStart: boolean = false
+  undoOpen: boolean = false;
+  dragStart: boolean = false;
+  notValid: boolean = false
+  dragIndex: number = -1;
   constructor(private SnackbarService: SnackbarService) {
 
   }
@@ -122,6 +124,10 @@ export class SharedAccordionComponent {
 
 
   onItemDropped(event: any, listIndex: number) {
+    console.log(event.previousContainer.data,
+      event.container.data,
+      event.previousIndex,
+      event.currentIndex,)
     this.tempSelectItem = JSON.parse(JSON.stringify(this.selectData))
     if (this.checkedItems.length <= this.dropLimit) {
       if (event.previousContainer !== event.container) {
@@ -340,12 +346,14 @@ export class SharedAccordionComponent {
     this.dragStart = false
   }
 
-  dragAccordionEnter(event: CdkDragStart) {
+  dragAccordionEnter(event: CdkDragStart, i: number) {
     this.accordionDrag = true
+    this.dragIndex = i
   }
 
   dragAccordionEnd(event: any) {
     this.accordionDrag = false
+    this.dragIndex = -1
   }
   dragMove(event: any) {
   }
@@ -367,5 +375,14 @@ export class SharedAccordionComponent {
       this.selectData.map(res => res.isExpand = true)
     }
     this.accordionToggle = !this.accordionToggle
+  }
+
+  mouseEventEnter(i: number) {
+    this.selectData[i].isHeaderHover = true
+    this.notValid = true
+  }
+  mouseEventLeave(i: number) {
+    this.selectData[i].isHeaderHover = false
+    this.notValid = false
   }
 }

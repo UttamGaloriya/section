@@ -6,6 +6,7 @@
       <mat-icon>swap_vert</mat-icon>
     </button>
   </mat-card-actions>
+
   <mat-accordion
     class="section-panel"
     multi
@@ -17,7 +18,7 @@
       <mat-expansion-panel
         hideToggle
         cdkDrag
-        (cdkDragStarted)="dragAccordionEnter($event)"
+        (cdkDragStarted)="dragAccordionEnter($event, i)"
         (cdkDragEnded)="dragAccordionEnd($event)"
         [cdkDragDisabled]="selectData.length == 1"
         class="mat-accordion-panel"
@@ -38,13 +39,14 @@
         <div
           *cdkDragPreview
           class="drag-dop-preview"
-          [ngClass]="
+          [ngClass]="[
             selectedItems.length <= dropLimit && selectedItems.length > 1
               ? 'shadow'
-              : ''
-          "
+              : '',
+            notValid ? '' : 'not-valid'
+          ]"
         >
-          {{ selection.name }}
+          {{ selection.name }}{{ notValid }}
           <span
             *ngIf="checkedItems.length <= dropLimit && checkedItems.length > 1"
             class="select-number"
@@ -52,13 +54,17 @@
           >
         </div>
 
+        <div *cdkDragPlaceholder></div>
+
         <mat-expansion-panel-header
+          (mouseenter)="mouseEventEnter(i)"
+          (mouseleave)="mouseEventLeave(i)"
           (click)="togglePanel(expansionPanel, i, selection)"
           class="mat-header-panel"
           [ngClass]="[
             selection.isCheckAll ? 'allActive' : 'notAllActive',
             selection.isCurrentAdd ? 'currentAdd' : '',
-            selection.isHovered && accordionDrag ? 'accordion-drag' : ''
+            selection.isHeaderHover && accordionDrag ? 'accordion-drag' : ''
           ]"
         >
           <mat-panel-title class="custom-panel-header">
@@ -117,6 +123,7 @@
             "
           >
             <mat-list-item
+              [id]="i"
               listAutoScrollDisabled
               (cdkDragStarted)="dragEnter($event)"
               (cdkDragEnded)="dragEnd($event)"
@@ -135,11 +142,11 @@
               <div
                 *cdkDragPreview
                 class="drag-dop-preview"
-                [ngClass]="
+                [ngClass]="[
                   checkedItems.length <= dropLimit && checkedItems.length > 1
                     ? 'shadow'
                     : ''
-                "
+                ]"
               >
                 {{ check.check }}
                 <span
@@ -189,6 +196,9 @@
           </ng-container>
         </mat-list>
       </mat-expansion-panel>
+      <ng-template #previewContainer>
+        <h1>done</h1>
+      </ng-template>
     </ng-container>
   </mat-accordion>
 </mat-card>
