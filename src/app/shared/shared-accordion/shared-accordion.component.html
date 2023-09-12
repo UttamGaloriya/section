@@ -1,83 +1,194 @@
 <mat-card>
-    <div class="undo" (click)="undoData()">
-        UNDO
-    </div>
-    <mat-card-actions align="end">
-        <button mat-button (click)="accordion.openAll()">Expand All</button>
-        <button mat-button (click)="accordion.closeAll()">Collapse All</button>
-    </mat-card-actions>
-    <mat-accordion class="section-panel" multi cdkDropList (cdkDropListDropped)="onItemDroppedAccordion($event)">
-        <ng-container *ngFor="let selection of selectData ,let i=index">
-            <mat-expansion-panel hideToggle cdkDrag (cdkDragStarted)="dragEnter($event)" [cdkDragDisabled]="selectData.length==1" class="mat-accordion-panel" id="list-{{ i }}" cdkDropList [cdkDropListData]="selection.checks" (cdkDropListDropped)="onItemDropped($event, i)" [cdkDropListConnectedTo]="connectedLists" [ngClass]="[selection.isDragStart ? 'dragActive' : 'dragInActive' ,
-         selectData.length==1?'checkNone':'']" (mouseenter)="mouseEnter(selection ,i)" (mouseleave)="mouseleave(selection,i)" #expansionPanel [disabled]="!selection.checks?.length">
-                <div *cdkDragPreview class="drag-dop-preview">
-                    {{selection.name}}
+  <div class="undo" (click)="undoData()">UNDO</div>
+  <h1>{{ accordionDrag }}</h1>
+  <mat-card-actions align="end">
+    <button mat-button (click)="accordionToggleButton()">
+      <mat-icon>swap_vert</mat-icon>
+    </button>
+  </mat-card-actions>
+  <mat-accordion
+    class="section-panel"
+    multi
+    cdkDropList
+    [cdkDropListSortingDisabled]="accordionDrag"
+    (cdkDropListDropped)="onItemDroppedAccordion($event)"
+  >
+    <ng-container *ngFor="let selection of selectData; let i = index">
+      <mat-expansion-panel
+        hideToggle
+        cdkDrag
+        (cdkDragStarted)="dragAccordionEnter($event)"
+        (cdkDragEnded)="dragAccordionEnd($event)"
+        [cdkDragDisabled]="selectData.length == 1"
+        class="mat-accordion-panel"
+        id="list-{{ i }}"
+        cdkDropList
+        [cdkDropListData]="selection.checks"
+        (cdkDropListDropped)="onItemDropped($event, i)"
+        [cdkDropListConnectedTo]="connectedLists"
+        [ngClass]="[
+          selection.isDragStart ? 'dragActive' : 'dragInActive',
+          selectData.length == 1 ? 'checkNone' : ''
+        ]"
+        (mouseenter)="mouseEnter(selection, i)"
+        (mouseleave)="mouseleave(selection, i)"
+        #expansionPanel
+        [expanded]="selection.isExpand || (selection.isHovered && dragStart)"
+      >
+        <div
+          *cdkDragPreview
+          class="drag-dop-preview"
+          [ngClass]="
+            selectedItems.length <= dropLimit && selectedItems.length > 1
+              ? 'shadow'
+              : ''
+          "
+        >
+          {{ selection.name }}
+          <span
+            *ngIf="checkedItems.length <= dropLimit && checkedItems.length > 1"
+            class="select-number"
+            >{{ checkedItems.length }}</span
+          >
+        </div>
 
+        <mat-expansion-panel-header
+          (click)="togglePanel(expansionPanel, i, selection)"
+          class="mat-header-panel"
+          [ngClass]="[
+            selection.isCheckAll ? 'allActive' : 'notAllActive',
+            selection.isCurrentAdd ? 'currentAdd' : '',
+            selection.isHovered && accordionDrag ? 'accordion-drag' : ''
+          ]"
+        >
+          <mat-panel-title class="custom-panel-header">
+            <div class="check-panel" *ngIf="selectData.length >= 3">
+              <mat-checkbox
+                [checked]="selection.isCheckAll"
+                [style.opacity]="selection.isHovered ? 1 : 0"
+                (click)="handleButtonClick($event)"
+                (change)="onCheckboxChange(i, selection)"
+              ></mat-checkbox>
+            </div>
+            <span class="order-number">{{ selection.orderNumber }}</span>
+            <div class="title-panel">
+              <span class="custom-heading">{{ selection.name }}</span>
+              <span class="custom-sub-heading" *ngIf="selection.checks?.length"
+                >{{ selection.checks?.length }} checks</span
+              >
+              <span class="custom-sub-heading" *ngIf="!selection.checks?.length"
+                >0 checks</span
+              >
+            </div>
+          </mat-panel-title>
+          <button
+            mat-icon-button
+            (click)="handleButtonClick($event)"
+            [matMenuTriggerFor]="menu"
+            aria-label="Example icon-button with a menu"
+          >
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            (click)="panelOpen($event, i)"
+            class="toggle-icon"
+          >
+            <mat-icon>{{
+              selection.isExpand ? "keyboard_arrow_down" : "keyboard_arrow_up"
+            }}</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item>
+              <mat-icon>delete</mat-icon>
+              <span>Delete</span>
+            </button>
+            <button mat-menu-item disabled>
+              <mat-icon>edit</mat-icon>
+              <span>Edit</span>
+            </button>
+          </mat-menu>
+        </mat-expansion-panel-header>
+        <mat-list>
+          <ng-container
+            *ngFor="
+              let check of selection.checks || [];
+              let checkNumber = index
+            "
+          >
+            <mat-list-item
+              listAutoScrollDisabled
+              (cdkDragStarted)="dragEnter($event)"
+              (cdkDragEnded)="dragEnd($event)"
+              (cdkDragMoved)="dragMove($event)"
+              class="mat-accordion-list"
+              (mouseenter)="check.isHovered = true"
+              (mouseleave)="mouseLeaveList(i, checkNumber)"
+              [ngClass]="[
+                check.isCheck == true ? 'activeCheck' : '',
+                check.isHovered && !check.isCheck ? 'list-hover' : '',
+                check.isCurrentAdd ? 'currentAdd' : ''
+              ]"
+              cdkDrag
+              [cdkDragData]="[check, i, checkNumber]"
+            >
+              <div
+                *cdkDragPreview
+                class="drag-dop-preview"
+                [ngClass]="
+                  checkedItems.length <= dropLimit && checkedItems.length > 1
+                    ? 'shadow'
+                    : ''
+                "
+              >
+                {{ check.check }}
+                <span
+                  *ngIf="
+                    checkedItems.length <= dropLimit && checkedItems.length > 1
+                  "
+                  class="select-number"
+                  >{{ checkedItems.length }}</span
+                >
+              </div>
+
+              <div
+                class="mat-list-details"
+                (click)="onCheckboxListChange(selection, i, checkNumber)"
+              >
+                <div class="check-panel" *ngIf="checkLength(selection.checks)">
+                  <mat-checkbox
+                    class="custom-checkbox"
+                    [checked]="check.isCheck"
+                    [style.opacity]="check.isHovered ? 1 : 0"
+                  >
+                  </mat-checkbox>
                 </div>
-                <mat-expansion-panel-header class="mat-header-panel" [ngClass]="[selection.isCheckAll? 'allActive' :'notAllActive' ,selection.isCurrentAdd? 'currentAdd':'']">
-                    <mat-panel-title class="custom-panel-header">
-                        <div class="check-panel" *ngIf="selectData.length>=3">
-                            <mat-checkbox [checked]="selection.isCheckAll" [style.opacity]="selection.isHovered ? 1 : 0" class="custom-checkbox" (change)="onCheckboxChange(i,selection)" (click)="handleButtonClick($event)"></mat-checkbox>
-                        </div>
-                        <span class="order-number">{{selection.orderNumber}}</span>
-                        <div class="title-panel">
-                            <span class="custom-heading">{{selection.name}}</span>
-                            <span class="custom-sub-heading" *ngIf="selection.checks?.length">{{selection.checks?.length}} checks</span>
-                            <span class="custom-sub-heading" *ngIf="!selection.checks?.length">0 checks</span>
-                        </div>
-                    </mat-panel-title>
-                    <button mat-icon-button (click)="selection.isExpand= !selection.isExpand">
-                        <mat-icon>{{ selection.isExpand ? 'remove' : 'add' }}</mat-icon>
-                    </button>
-                    <button mat-icon-button (click)="handleButtonClick($event)" [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
-                        <mat-icon>more_vert</mat-icon>
-                    </button>
-                    <mat-menu #menu="matMenu">
-                        <button mat-menu-item>
-                            <mat-icon>delete</mat-icon>
-                            <span>Delete</span>
-                        </button>
-                        <button mat-menu-item disabled>
-                            <mat-icon>edit</mat-icon>
-                            <span>Edit</span>
-                        </button>
-                    </mat-menu>
-                </mat-expansion-panel-header>
-                <mat-list>
-                    <ng-container *ngFor="let check of selection.checks || [], let checkNumber=index">
-                        <mat-list-item (cdkDragStarted)="dragEnter($event)" (cdkDragEnded)="dragEnd($event)" class="mat-accordion-list" (mouseenter)="check.isHovered = true" (mouseleave)="mouseLeaveList(i,checkNumber)" [ngClass]="[check.isCheck ==true? 'activeCheck' :'',check.isHovered && !check.isCheck?'list-hover':'' ,check.isCurrentAdd ? 'currentAdd':'']" cdkDrag [cdkDragData]="[check ,i,checkNumber]">
-                            <div *cdkDragPreview class="drag-dop-preview" [ngClass]="checkedItems.length<=dropLimit  && checkedItems.length>1? 'shadow':''">
-                                {{check.check}}
-                                <span *ngIf="checkedItems.length<=dropLimit && checkedItems.length>1" class="select-number">{{checkedItems.length}}</span>
-                            </div>
-                            <div class="mat-list-details" (click)="onCheckboxListChange(selection ,i,checkNumber)">
-                                <div class="check-panel" *ngIf="checkLength(selection.checks)">
-                                    <mat-checkbox class="custom-checkbox" [checked]="check.isCheck" [style.opacity]="check.isHovered ? 1 : 0"> </mat-checkbox>
-                                </div>
-                                <span></span>
-                                <div class="custom-sub-heading">
-                                    {{check.check}}
-                                </div>
-
-                            </div>
-                            <button mat-icon-button [matMenuTriggerFor]="menu" class="more-vernt">
-                                <mat-icon>more_vert</mat-icon>
-                            </button>
-                            <mat-menu #menu="matMenu">
-                                <button mat-menu-item>
-                                    <mat-icon>delete</mat-icon>
-                                    <span>Delete</span>
-                                </button>
-                                <button mat-menu-item>
-                                    <mat-icon>edit</mat-icon>
-                                    <span>Edit</span>
-                                </button>
-                            </mat-menu>
-                        </mat-list-item>
-                    </ng-container>
-                </mat-list>
-            </mat-expansion-panel>
-        </ng-container>
-    </mat-accordion>
-
+                <span></span>
+                <div class="custom-sub-heading">
+                  {{ check.check }}
+                </div>
+              </div>
+              <button
+                mat-icon-button
+                [matMenuTriggerFor]="menu"
+                class="more-vernt"
+              >
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item>
+                  <mat-icon>delete</mat-icon>
+                  <span>Delete</span>
+                </button>
+                <button mat-menu-item>
+                  <mat-icon>edit</mat-icon>
+                  <span>Edit</span>
+                </button>
+              </mat-menu>
+            </mat-list-item>
+          </ng-container>
+        </mat-list>
+      </mat-expansion-panel>
+    </ng-container>
+  </mat-accordion>
 </mat-card>

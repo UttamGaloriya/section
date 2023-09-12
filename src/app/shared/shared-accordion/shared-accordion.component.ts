@@ -14,24 +14,24 @@ export class SharedAccordionComponent {
   tempSelectItem: SelectItem[] = []
   targetItems: any[] = [];
   connectedLists: string[] = []
-  @ViewChild(MatExpansionPanel) expansionPanel!: MatExpansionPanel;
-  @ViewChild(MatAccordion) accordion!: MatAccordion;
+  accordionDrag: boolean = false
+  accordionToggle: boolean = true
   dropLimit: number = 3;
   dragActive: boolean = false
   checkedItems: CheckItem[] = [];
   selectedItems: SelectItem[] = [];
   accordionOpen: boolean = false
   undoOpen: boolean = false
+  dragStart: boolean = false
   constructor(private SnackbarService: SnackbarService) {
 
   }
   ngOnInit() {
     this.connectedLists = this.selectData.map((list, index) => `list-${index}`);
-
   }
-  ngAfterViewInit() {
-    // this.accordion.openAll()
 
+  ngAfterViewInit() {
+    this.selectData.map(res => res.isExpand = false)
   }
   onCheckboxChange(index: number, selection: SelectItem,) {
     this.selectData[index].isCheckAll = !this.selectData[index].isCheckAll
@@ -87,12 +87,13 @@ export class SharedAccordionComponent {
   }
 
 
-  togglePanel(panel: MatExpansionPanel) {
+  togglePanel(panel: MatExpansionPanel, index: number, selection: SelectItem) {
     if (panel.expanded) {
       panel.close();
     } else {
       panel.open();
     }
+    this.onCheckboxChange(index, selection)
   }
 
   mouseEnter(selection: SelectItem, i: number) {
@@ -169,6 +170,7 @@ export class SharedAccordionComponent {
     setTimeout(() => {
       this.undoOpen = false
     }, 3000);
+    this.selectData[listIndex].isExpand = true
   }
 
   onItemDroppedAccordion(event: any) {
@@ -316,6 +318,11 @@ export class SharedAccordionComponent {
     event.stopPropagation();
   }
 
+  panelOpen(event: Event, i: number) {
+    event.stopPropagation();
+    this.selectData[i].isExpand = !this.selectData[i].isExpand
+  }
+
   undo() {
     console.log(this.selectData, this.tempSelectItem)
   }
@@ -326,20 +333,23 @@ export class SharedAccordionComponent {
 
   //drag event
   dragEnter(event: CdkDragStart) {
-    this.accordion.openAll()
-    // this.accordionOpen = true
-    // this.selectData.map(res => res.isExpand = false)
+    this.dragStart = true
   }
+
   dragEnd(event: any) {
-    // this.accordionOpen = false
+    this.dragStart = false
   }
+
   dragAccordionEnter(event: CdkDragStart) {
-    // this.accordionOpen = false
-    // this.accordion.closeAll()
+    this.accordionDrag = true
   }
+
   dragAccordionEnd(event: any) {
-    // this.accordionOpen = false
+    this.accordionDrag = false
   }
+  dragMove(event: any) {
+  }
+
   checkLength(check: any) {
     return true
   }
@@ -348,6 +358,14 @@ export class SharedAccordionComponent {
     this.resetValues(this.tempSelectItem);
     this.selectData = this.tempSelectItem;
     this.undoOpen = false
-    this.accordion.openAll()
+  }
+
+  accordionToggleButton() {
+    if (this.accordionToggle) {
+      this.selectData.map(res => res.isExpand = false)
+    } else {
+      this.selectData.map(res => res.isExpand = true)
+    }
+    this.accordionToggle = !this.accordionToggle
   }
 }
