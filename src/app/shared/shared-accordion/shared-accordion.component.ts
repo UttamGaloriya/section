@@ -21,11 +21,13 @@ export class SharedAccordionComponent {
   checkedItems: CheckItem[] = [];
   selectedItems: SelectItem[] = [];
   accordionOpen: boolean = false
+  undoOpen: boolean = false
   constructor(private SnackbarService: SnackbarService) {
 
   }
   ngOnInit() {
     this.connectedLists = this.selectData.map((list, index) => `list-${index}`);
+
   }
   ngAfterViewInit() {
     // this.accordion.openAll()
@@ -119,6 +121,7 @@ export class SharedAccordionComponent {
 
 
   onItemDropped(event: any, listIndex: number) {
+    this.tempSelectItem = JSON.parse(JSON.stringify(this.selectData))
     if (this.checkedItems.length <= this.dropLimit) {
       if (event.previousContainer !== event.container) {
         const item = event.item.data;
@@ -161,12 +164,15 @@ export class SharedAccordionComponent {
     } else {
       this.SnackbarService.openSnackBar()
     }
+    this.undoOpen = true
     this.resetValues(this.selectData);
-
-
+    setTimeout(() => {
+      this.undoOpen = false
+    }, 3000);
   }
 
   onItemDroppedAccordion(event: any) {
+    this.tempSelectItem = JSON.parse(JSON.stringify(this.selectData))
     if (this.selectedItems.length == 1 || this.selectedItems.length == 0) {
       this.selectData[event.previousIndex].isCurrentAdd = true
       this.swapListData(this.selectData, event.previousIndex, event.currentIndex)
@@ -177,6 +183,10 @@ export class SharedAccordionComponent {
       }
     }
     this.resetValues(this.selectData)
+    this.undoOpen = true
+    setTimeout(() => {
+      this.undoOpen = false
+    }, 3000);
   }
 
 
@@ -316,6 +326,7 @@ export class SharedAccordionComponent {
 
   //drag event
   dragEnter(event: CdkDragStart) {
+    this.accordion.openAll()
     // this.accordionOpen = true
     // this.selectData.map(res => res.isExpand = false)
   }
@@ -329,5 +340,14 @@ export class SharedAccordionComponent {
   dragAccordionEnd(event: any) {
     // this.accordionOpen = false
   }
+  checkLength(check: any) {
+    return true
+  }
 
+  undoData() {
+    this.resetValues(this.tempSelectItem);
+    this.selectData = this.tempSelectItem;
+    this.undoOpen = false
+    this.accordion.openAll()
+  }
 }
