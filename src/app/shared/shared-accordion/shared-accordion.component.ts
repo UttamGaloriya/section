@@ -10,12 +10,13 @@ import { SnackbarService } from '../../services/snackbar.service';
   styleUrls: ['./shared-accordion.component.scss']
 })
 export class SharedAccordionComponent {
+
   @Input() selectData: SelectItem[] = []
   tempSelectItem: SelectItem[] = []
   targetItems: any[] = [];
   connectedLists: string[] = []
   accordionDrag: boolean = false
-  accordionToggle: boolean = true
+  accordionToggle: boolean = false
   dropLimit: number = 3;
   dragActive: boolean = false
   checkedItems: CheckItem[] = [];
@@ -23,8 +24,11 @@ export class SharedAccordionComponent {
   accordionOpen: boolean = false
   undoOpen: boolean = false;
   dragStart: boolean = false;
-  notValid: boolean = false
-  dragIndex: number = -1;
+  panelValid: boolean = false
+  dragIndex: any = {
+    panelNumber: -1,
+    listNumber: -1
+  };
   constructor(private SnackbarService: SnackbarService) {
 
   }
@@ -124,10 +128,10 @@ export class SharedAccordionComponent {
 
 
   onItemDropped(event: any, listIndex: number) {
-    console.log(event.previousContainer.data,
-      event.container.data,
-      event.previousIndex,
-      event.currentIndex,)
+    // console.log(event.previousContainer.data,
+    //   event.container.data,
+    //   event.previousIndex,
+    //   event.currentIndex, event, event.previousContainer !== event.container)
     this.tempSelectItem = JSON.parse(JSON.stringify(this.selectData))
     if (this.checkedItems.length <= this.dropLimit) {
       if (event.previousContainer !== event.container) {
@@ -140,7 +144,7 @@ export class SharedAccordionComponent {
         checksData.isCurrentAdd = true
 
         let checksValue = this.selectData[index].checks
-        if (this.checkedItems.length == 1) {
+        if (this.checkedItems.length == 1 || this.checkedItems.length == 0) {
           if (checksValue !== undefined) {
             this.selectData[index].checks?.splice(event.currentIndex, 0, checksData)
             this.selectData[selectIndex].checks?.splice(checkIndex, 1)
@@ -180,21 +184,25 @@ export class SharedAccordionComponent {
   }
 
   onItemDroppedAccordion(event: any) {
-    this.tempSelectItem = JSON.parse(JSON.stringify(this.selectData))
-    if (this.selectedItems.length == 1 || this.selectedItems.length == 0) {
-      this.selectData[event.previousIndex].isCurrentAdd = true
-      this.swapListData(this.selectData, event.previousIndex, event.currentIndex)
-    } else {
-      if (event.currentIndex !== event.previousIndex) {
-        this.selectedItems.map(res => res.isCurrentAdd = true)
-        this.selectItemDataTransfer(this.selectedItems, event.currentIndex);
+    if (this.accordionDrag) {
+      this.tempSelectItem = JSON.parse(JSON.stringify(this.selectData))
+      if (this.selectedItems.length == 1 || this.selectedItems.length == 0 && (event.previousIndex !== event.currentIndex)) {
+        this.selectData[event.previousIndex].isCurrentAdd = true
+        console.log(event)
+        this.swapListData(this.selectData, event.previousIndex, event.currentIndex)
+      } else {
+        if (event.currentIndex !== event.previousIndex) {
+          this.selectedItems.map(res => res.isCurrentAdd = true)
+          this.selectItemDataTransfer(this.selectedItems, event.currentIndex);
+        }
       }
+      this.resetValues(this.selectData)
+      this.undoOpen = true
+      setTimeout(() => {
+        this.undoOpen = false
+      }, 3000);
     }
-    this.resetValues(this.selectData)
-    this.undoOpen = true
-    setTimeout(() => {
-      this.undoOpen = false
-    }, 3000);
+    this.accordionDrag = false
   }
 
 
@@ -338,22 +346,31 @@ export class SharedAccordionComponent {
   }
 
   //drag event
-  dragEnter(event: CdkDragStart) {
+  dragEnter(event: CdkDragStart, index: number, listNumber: number) {
     this.dragStart = true
+    this.dragIndex.panelNumber = index;
+    this.dragIndex.listNumber = listNumber;
+    this.accordionDrag = true
+
+
+
   }
 
   dragEnd(event: any) {
     this.dragStart = false
+    this.dragIndex.panelNumber = -1;
+    this.dragIndex.listNumber = -1;
+    this.accordionDrag = false
   }
 
   dragAccordionEnter(event: CdkDragStart, i: number) {
     this.accordionDrag = true
-    this.dragIndex = i
+    this.dragIndex.panelNumber = i
   }
 
   dragAccordionEnd(event: any) {
-    this.accordionDrag = false
-    this.dragIndex = -1
+    this.dragIndex.panelNumber = -1
+    this.accordionDrag = this.panelValid
   }
   dragMove(event: any) {
   }
@@ -379,10 +396,10 @@ export class SharedAccordionComponent {
 
   mouseEventEnter(i: number) {
     this.selectData[i].isHeaderHover = true
-    this.notValid = true
+    this.panelValid = true
   }
   mouseEventLeave(i: number) {
     this.selectData[i].isHeaderHover = false
-    this.notValid = false
+    this.panelValid = false
   }
 }
