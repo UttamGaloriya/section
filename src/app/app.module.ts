@@ -11,6 +11,7 @@ import { SharedAccordionComponent } from './shared/shared-accordion/shared-accor
 import { FormsModule } from '@angular/forms';
 import { SharedCheckboxComponent } from './shared/shared-checkbox/shared-checkbox.component';
 import { ShareEditComponent } from './shared/share-edit/share-edit.component';
+import { ListViewComponent } from './shared component/list-view/list-view.component';
 
 
 @NgModule({
@@ -20,6 +21,7 @@ import { ShareEditComponent } from './shared/share-edit/share-edit.component';
     SharedAccordionComponent,
     SharedCheckboxComponent,
     ShareEditComponent,
+    ListViewComponent,
   ],
   imports: [
     CommonModule,

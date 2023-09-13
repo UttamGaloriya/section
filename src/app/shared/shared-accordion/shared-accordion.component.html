@@ -1,5 +1,5 @@
 <mat-card>
-  <div class="undo" (click)="undoData()">UNDO</div>
+  <div class="undo" *ngIf="undoOpen" (click)="undoData()">UNDO</div>
   <h1>{{ accordionDrag }}</h1>
   <mat-card-actions align="end">
     <button mat-button (click)="accordionToggleButton()">
@@ -50,8 +50,7 @@
           [ngClass]="[
             selectedItems.length <= dropLimit && selectedItems.length > 1
               ? 'shadow'
-              : '',
-            panelValid ? '' : 'not-valid'
+              : ''
           ]"
         >
           {{ selection.name }}{{ panelValid }}
@@ -62,9 +61,13 @@
             class="select-number"
             >{{ selectedItems.length }}</span
           >
+
+          <mat-icon color="warn" *ngIf="!panelValid" class="not-valid-icon"
+            >not_interested</mat-icon
+          >
         </div>
 
-        <div *cdkDragPlaceholder></div>
+        <div *cdkDragPlaceholder class="palce-holder-view"></div>
 
         <mat-expansion-panel-header
           (mouseenter)="mouseEventEnter(i)"
@@ -143,9 +146,8 @@
             ></div>
             <mat-list-item
               [id]="i"
-              listAutoScrollDisabled
               (cdkDragStarted)="dragEnter($event, i, checkNumber)"
-              (cdkDragEnded)="dragEnd($event)"
+              (cdkDragEnded)="dragEnd($event, i, checkNumber)"
               (cdkDragMoved)="dragMove($event)"
               class="mat-accordion-list"
               (mouseenter)="check.isHovered = true"
@@ -176,7 +178,7 @@
                   >{{ checkedItems.length }}</span
                 >
               </div>
-              <div *cdkDragPlaceholder></div>
+              <div *cdkDragPlaceholder class="palce-holder-view"></div>
               <div
                 class="mat-list-details"
                 (click)="onCheckboxListChange(selection, i, checkNumber)"
@@ -212,7 +214,7 @@
                 </button>
               </mat-menu>
             </mat-list-item>
-
+            <!-- list preview  -->
             <ng-template #listDragPreview>
               <mat-list-item
                 class="mat-accordion-list"
@@ -274,9 +276,6 @@
           [expanded]="selection.isExpand || (selection.isHovered && dragStart)"
         >
           <mat-expansion-panel-header
-            (mouseenter)="mouseEventEnter(i)"
-            (mouseleave)="mouseEventLeave(i)"
-            (click)="togglePanel(expansionPanel, i, selection)"
             class="mat-header-panel"
             [ngClass]="[
               selection.isCheckAll ? 'allActive' : 'notAllActive',

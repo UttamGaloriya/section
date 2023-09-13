@@ -128,10 +128,6 @@ export class SharedAccordionComponent {
 
 
   onItemDropped(event: any, listIndex: number) {
-    // console.log(event.previousContainer.data,
-    //   event.container.data,
-    //   event.previousIndex,
-    //   event.currentIndex, event, event.previousContainer !== event.container)
     this.tempSelectItem = JSON.parse(JSON.stringify(this.selectData))
     if (this.checkedItems.length <= this.dropLimit) {
       if (event.previousContainer !== event.container) {
@@ -153,23 +149,15 @@ export class SharedAccordionComponent {
             this.selectData[selectIndex].checks?.splice(checkIndex, 1)
           }
         } else {
-          this.checkedItems.forEach(data => {
-            data.isCurrentAdd = true
-            this.dataTransferList(data, index)
-          }
-          );
+          this.dataTransferList(this.checkedItems, event.currentIndex, index)
         }
       } else {
+        //same container
         let data: CheckItem[] = this.selectData[listIndex]?.checks || [];
-        if (this.checkedItems.length == 1) {
-          this.swapListData(data, event.previousIndex, event.currentIndex)
+        if (this.checkedItems.length == 1 || this.checkedItems.length == 0) {
+          moveItemInArray(data, event.previousIndex, event.currentIndex)
         } else {
-          let currentIndex = event.currentIndex;
-          this.checkedItems.map(res => res.isCurrentAdd = true)
-          for (let i = this.checkedItems.length - 1; i >= 0; i--) {
-            this.sameAccordionDataTransfer(this.checkedItems[i], currentIndex, listIndex);
-          }
-
+          this.dataTransferList(this.checkedItems, event.currentIndex, listIndex)
         }
       }
     } else {
@@ -189,7 +177,7 @@ export class SharedAccordionComponent {
       if (this.selectedItems.length == 1 || this.selectedItems.length == 0 && (event.previousIndex !== event.currentIndex)) {
         this.selectData[event.previousIndex].isCurrentAdd = true
         console.log(event)
-        this.swapListData(this.selectData, event.previousIndex, event.currentIndex)
+        moveItemInArray(this.selectData, event.previousIndex, event.currentIndex)
       } else {
         if (event.currentIndex !== event.previousIndex) {
           this.selectedItems.map(res => res.isCurrentAdd = true)
@@ -229,6 +217,7 @@ export class SharedAccordionComponent {
 
   swapListData(data: any, previousIndex: number, currentIndex: number) {
     let tempData = data[previousIndex]
+    tempData.isCurrentAdd = true;
     data[previousIndex] = data[currentIndex]
     data[currentIndex] = tempData
 
@@ -275,22 +264,25 @@ export class SharedAccordionComponent {
     this.selectData[listIndex].checks?.splice(currentIndexId, 0, data)
   }
 
-  dataTransferList(data: CheckItem, selectIndex: number) {
-    data.isCurrentAdd = true
-    const index = this.selectData.findIndex((res) => res.checks?.includes(data));
-    if (index !== -1) {
-      const checkIndex = this.selectData[index].checks?.indexOf(data);
-      if (checkIndex !== -1 && checkIndex !== undefined) {
-        this.selectData[index].checks?.splice(checkIndex, 1);
+  dataTransferList(data: CheckItem[], currentIndexList: number, selectIndex: number) {
+    //remove check previous position
+    data.forEach((item) => {
+      const index = this.selectData.findIndex((res) => res.checks?.includes(item));
+      if (index !== -1) {
+        const checkIndex = this.selectData[index].checks?.indexOf(item);
+        if (checkIndex !== -1 && checkIndex !== undefined) {
+          this.selectData[index].checks?.splice(checkIndex, 1);
+        }
       }
-    }
-    let selectValue = this.selectData[selectIndex].checks
-    if (selectValue !== undefined) {
-      this.selectData[selectIndex].checks?.push(data)
-    } else {
-      let temp = []
-      temp.push(data)
-      this.selectData[selectIndex].checks = temp
+    })
+
+    //add check current Index
+    if (this.selectData[selectIndex].checks !== undefined) {
+      data.forEach(res => {
+        res.isCurrentAdd = true
+        this.selectData[selectIndex].checks?.splice(currentIndexList, 0, res);
+        currentIndexList++;
+      })
     }
   }
 
@@ -352,15 +344,17 @@ export class SharedAccordionComponent {
     this.dragIndex.listNumber = listNumber;
     this.accordionDrag = true
 
-
-
   }
 
-  dragEnd(event: any) {
+  dragEnd(event: any, index: number, listNumber: number) {
     this.dragStart = false
     this.dragIndex.panelNumber = -1;
     this.dragIndex.listNumber = -1;
     this.accordionDrag = false
+    let data = this.selectData[index].checks
+    if (data !== undefined) {
+      data[listNumber].isCurrentAdd = true
+    }
   }
 
   dragAccordionEnter(event: CdkDragStart, i: number) {

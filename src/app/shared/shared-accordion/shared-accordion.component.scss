@@ -93,6 +93,12 @@ border-radius: 50% !important;
   -moz-box-shadow: 7px 5px 0px 1px   #ade0fa;
   box-shadow: 7px 5px 0px 1px   #ade0fa;
 }
+.not-valid-icon{
+  position: absolute;
+  top:-10px;
+  right: -10px;
+  background: #ffffff45;
+}
 .select-number{
   position: absolute;
   border-radius: 50%;
@@ -101,7 +107,7 @@ border-radius: 50% !important;
   background:#ade0fa;
   color: #000;
   top:-10px;
-  right: -10px;
+  right: -8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -116,7 +122,7 @@ border-radius: 50% !important;
   animation-duration: 3s;
 }
 @keyframes borderCurrent {
-  from {border: 3px solid #63d867;}
+  from {border: 1px solid #63d867;}
   to {border: 1px solid #63d867;}
 }
 .mat-accordion-panel .notAllActive{
@@ -133,17 +139,12 @@ border-radius: 50% !important;
   padding: 0;
 }
 
-.cdk-drag-placeholder {
-  background: #fff4e6;
-  }
-  .cdk-drag-placeholder  .notAllActive,  .cdk-drag-placeholder .allActive{
-    background: #fff4e6; 
-    background-color:#fff4e6 ;
-  }
+
   .mdc-list .custom-sub-heading{
     margin-left: 30px;
   }
 .section-panel{
+  margin-bottom: 10px;
   .checkNone  .check-panel  , .checkNone .custom-checkbox{
     opacity: 0;
   }
@@ -169,12 +170,15 @@ border-radius: 50% !important;
   border: 1px dashed blue ;
 }
 
-.not-valid{
-  border: 3px solid #e64040 !important;
-}
+
 
 
 .section-panel .selected-panel{
   background:#FFF4E6;
   margin-bottom: 10px;
 }
+.palce-holder-view{
+ height: 3px;
+ background: #07bfb9;
+}
+.danger{color: #e64040;}
