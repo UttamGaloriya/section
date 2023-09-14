@@ -123,14 +123,17 @@ export class SharedAccordionComponent {
 
 
   onItemDropped(event: any, listIndex: number) {
+
     console.log(event)
     this.tempSelectItem = JSON.parse(JSON.stringify(this.selectData))
-    // this.checkedItems.length <= this.dropLimit
-    if (true) {
+    this.checkedItems.length <= this.dropLimit
+    if (this.checkedItems.length <= this.dropLimit) {
       if (event.previousContainer !== event.container) {
         let stringId = event.container.id
         let index = parseInt(stringId.replace('list-', ''))
         if (this.checkedItems.length == 1 || this.checkedItems.length == 0) {
+          event.previousContainer.data[event.previousIndex].isCurrentAdd = true
+          console.log(event.previousContainer.data[event.previousIndex])
           transferArrayItem(
             event.previousContainer.data,
             event.container.data,
@@ -138,15 +141,18 @@ export class SharedAccordionComponent {
             event.currentIndex,
           );
         } else {
+          console.log(event)
           this.dataTransferList(this.checkedItems, event.currentIndex, index, false, event)
         }
       } else {
         //same container
         let data: CheckItem[] = this.selectData[listIndex]?.checks || [];
-        if (this.checkedItems.length == 1 || this.checkedItems.length == 0) {
+        if (this.checkedItems.length <= 1 && (event.previousIndex !== event.currentIndex)) {
+          event.previousContainer.data[event.previousIndex].isCurrentAdd = true
           moveItemInArray(data, event.previousIndex, event.currentIndex)
         } else {
           this.dataTransferList(this.checkedItems, event.currentIndex, listIndex, true, event)
+
         }
       }
       this.dropAfterEffect(listIndex)
@@ -214,7 +220,6 @@ export class SharedAccordionComponent {
     tempData.isCurrentAdd = true;
     data[previousIndex] = data[currentIndex]
     data[currentIndex] = tempData
-
   }
 
   //multiple item selected
@@ -260,13 +265,14 @@ export class SharedAccordionComponent {
 
   dataTransferList(data: CheckItem[], currentIndexList: number, selectIndex: number, containerSame: boolean, event: any) {
     //if container different and index more then checks length
+    let tempCurrentIndex = currentIndexList
     if (event.container.data.length == currentIndexList && !containerSame) {
-      currentIndexList--;
+      tempCurrentIndex--;
     }
 
     let tempData: any = this.selectData[selectIndex]?.checks;
     if (tempData !== undefined) {
-      tempData = tempData[currentIndexList]
+      tempData = tempData[tempCurrentIndex]
     }
 
     //remove check previous position
@@ -281,7 +287,9 @@ export class SharedAccordionComponent {
     })
     let currentIndex = this.selectData[selectIndex].checks?.findIndex(res => res.id == tempData.id) || 0
     //if container same
-    currentIndex++;
+    if (containerSame || event.container.data.length == currentIndexList) {
+      currentIndex++;
+    }
     //add check current Index
     if (this.selectData[selectIndex].checks !== undefined) {
       data.forEach(res => {
@@ -357,10 +365,7 @@ export class SharedAccordionComponent {
     this.dragIndex.panelNumber = -1;
     this.dragIndex.listNumber = -1;
     this.accordionDrag = false
-    let data = this.selectData[index].checks
-    if (data !== undefined) {
-      data[listNumber].isCurrentAdd = true
-    }
+
   }
 
   dragAccordionEnter(event: CdkDragStart, i: number) {
@@ -398,6 +403,7 @@ export class SharedAccordionComponent {
     this.selectData[i].isHeaderHover = true
     this.panelValid = true
   }
+
   mouseEventLeave(i: number) {
     this.selectData[i].isHeaderHover = false
     this.panelValid = false
